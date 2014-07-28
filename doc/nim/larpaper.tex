@@ -65,6 +65,13 @@
 \author{Wes Ketchum}
 \address{}
 \ead{}
+\author{David McKee}
+\address{}
+\ead{}
+
+\author{Gianluca Petrillo}
+\address{}
+\ead{}
 \author{Brian Rebel}
 \address{PO Box XYZ, MS309, Fermi National Accelerator Lab, Batavia, IL, USA, 60510-5011}
 \ead{brebel@fnal.gov}
@@ -82,6 +89,9 @@
 \author{Kazuhiro Terao}
 \address{}
 \ead{}
+\author{Matthew Toups}
+\address{}
+\ead{}
 \author{Tingjum Yang}
 \address{}
 \ead{}
@@ -92,7 +102,7 @@ A common software package for the simulation, reconstruction, and analysis of Li
 \end{abstract}
 \tableofcontents
 
-\large
+%\large
 %%%
 %%%\clearpage
 \maketitle
@@ -101,7 +111,10 @@ A common software package for the simulation, reconstruction, and analysis of Li
 \subsection{What is LArSoft}
 LArSoft is a software package for the simulation, reconstruction, and analysis of all planned and running liquid argon experiments at Fermilab. Any Liquid Argon Time Projection Chamber (LArTPC) experiment can make use of LArSoft algorithms as long as the experiment supplies a properly formatted description of its detector geometry and electronics. 
 
-A liquid argon detector and a sophisticated software toolkit can analyze event topologies typical of neutrino interactions that are difficult to parse and make sense of in traditional legacy technologies. Figure~\ref{pi0.overlap} shows such an event. Even with high photocathode coverage, the large water Cerenkov detectors only see the Cerenkov rings on their walls; liquid argon detectors see every nuance of the event. LArSoft applies reconstruction algorithms to identify clusters of energy deposit, tracks, particle showers, and iteration vertices.
+LArSoft  benefits from the experience of multiple experiments.  Each LArTPC provides essentially the same basic information after accounting for small detector differences.  Thus, algorithms developed for one experiment can be directly used by another, as long as the differences in geometry are properly accounted for in the algorithms.  
+
+A liquid argon detector and a sophisticated software toolkit can analyze event topologies typical of neutrino interactions that are difficult to parse and make sense of in traditional legacy technologies. Figure~(ADD bubble chamber and Liquid Argon results picture)
+Liquid argon detectors see every nuance of the event. LArSoft applies reconstruction algorithms to identify clusters of energy deposit, tracks, particle showers, and iteration vertices.
 
 \subsection{Who Uses LArSoft}
 LArSoft is the product of the collaboration between the following experiments and Fermilab.
@@ -116,29 +129,29 @@ LArSoft is the product of the collaboration between the following experiments an
 \hspace*{2cm}
 \begin{figure}[h]
 \centering
-\caption{In this Neutral Current $\nu_\mu$ event a $\pi^0$ is produced along with a proton. The $\pi^0$ decays quickly to two photons in such a way that in the boosted frame (the lab frame) the $\gamma$s have a small opening angle. The software package WCSim~\cite{wcsim} can only find one ring. The Liquid argon detector, on the other hand, shows the two $\gamma$s with a separable opening angle. This event display is for a MicroBooNE-like detector. One sees the event as it projects onto the collection plane and the induction planes, respectively, top to bottom. The signal on a wire is seen in the very bottom panel. }
-\subfloat[]{\includegraphics[width=3.0in]{./mtrls/imgs/WCSIM-ovrlap-rings.png}}\\
-\subfloat[]{\includegraphics[width=3.0in]{./mtrls/imgs/LAr-uB-ovrlap-rings.png}}%
-\label{pi0.overlap}
+%\caption{\subfloat[]{\includegraphics[width=3.0in]{picture of bubble chamber}}%
+%\caption{\subfloat[]{\includegraphics[width=3.0in]{picture of liquid argon}}%
+\label{bubble}
 \end{figure}
 
 
 \section{Framework and Tools}
 \subsection{ART}
-(From Jim Kowalkowski)
-The foundation of LArSoft is the art framework and tool suite.  The art event processing framework coordinates event processing via configurable, pluggable modules that add data to, and retrieve data from, events.\cite{art-ref}  An event is one unit of data. It may represent an interaction, a beam crossing, or any period of collected data. 
+The foundation of LArSoft is the ART event processing framework which coordinates event processing via configurable, pluggable modules that add data to, and retrieve data from, events.\cite{art-ref}  An event is one unit of data. It may represent an interaction or any period of collected data.
 
-Each experiment can define the unit of data that corresponds to the event as it wishes.  Art has a pluggable layer for adding global services for interacting with data handling and cataloging systems, conditions, calibration, and geometry databases, and operating system utilities such as timing and memory checking.  It provides input and output modules for writing standardized ROOT files that contain necessary process tracking and data provenance. Filtering and streaming capabilities allow it to be used in an offline or an online setting.  It is the primary event selection tool used in artddaq. 
-
-The art suite contains the art framework plus many of the services necessary to operate in a production environment, include tools for compiling, installing, packaging, and deploying the system.
-
-Users develop and contribute software modules to perform reconstruction, filtering, and analysis. Workflows are constructed at run-time and can contain many processing streams for the filtering and sorting of event data into files.  
-
-Art is developed and support by the Fermilab Scientific Computing Division (SCD) and is used by experiments within the neutrino, astrophysics, and muon programs, including NOvA, Muon G-2, Mu2e, and DarkSide-50, and alongside LArSoft for MicroBooNE, ArgoNeuT, and Lariat.
+ART provides many of the services necessary to operate in a production environment, include tools for compiling, installing, packaging, and deploying the system.  ART is developed and support by the Fermilab Scientific Computing Division (SCD) and is used by experiments within the neutrino, astrophysics, and muon programs, including NOvA, Muon G-2, Mu2e, and DarkSide-50, and alongside LArSoft for MicroBooNE, ArgoNeuT, and Lariat.
 
 \subsection{External Packages}
 \subsubsection{Event Generation}
 LArSoft makes use of the NuSoft packages that provide a common interface to event generators, Geant4 and event display libraries developed for use by all neutrino experiments. The packages used include:    EventDisplayBase, EventGeneratorBase, G4Base, MagneticField, NuReweight and SimulationBase.
+
+There are four different ways to create events for LArSoft:
+\begin{enumerate}
+\item{CRY - a third-party package to simulate cosmic rays documented at \cite{cry}}
+\item{GENIE - external neutrino interaction generator used to produce neutrinos in the Monte Carlo simulation}
+\item{Single - creation of single participle spill or multiple particles with the initial position, momenta, and the spread of momenta and starting positions specified in the job file.}
+\item{LightSource - simulation of placing an extended, isotropic light source within the TPC volume to generate a stream of photons.}
+\end{enumerate}
 
 \subsubsection{Detector Simulation}
 NEED WORDS
@@ -155,27 +168,16 @@ The Geometry package contains a general interface into the detector descriptions
 \end{figure}
 
 As shown in Figure~\ref{geo-vol.img},
-the highest level volume is World which contains all elements of the geometry to be accounted for in the simulation and should be sized adequately to account for any features of the detector surroundings that are important for the simulation. For example, if there is a huge mass of rock near the detector that could alter the cosmic ray flux from that direction, it should be simulated. There is only one detector enclosure volume which can contain many volCryostat volumes, which in turn can each contain many volTPC volumes. Each volTPC contains only one volTPCActive, which defines the active volume of liquid argon that is read out by the detector. Any liquid argon that is outside of the drift field would not be part of volTPCActive. It is assumed that volTPCActive is simply a volume of liquid argon with no sub-volumes in it. 
+the highest level volume is World which contains all elements of the geometry to be accounted for in the simulation and should be sized adequately to account for any features of the detector surroundings that are important for the simulation. For example, if there is a huge mass of rock near the detector that could alter the cosmic ray flux from that direction, it should be simulated. There is only one detector enclosure volume which can contain many Cryostat volumes, which in turn can each contain many TPC volumes. Each TPC volume contains only one TPCActive volume, which defines the active volume of liquid argon that is read out by the detector. Any liquid argon that is outside of the drift field would not be part of volTPCActive. It is assumed that volTPCActive is simply a volume of liquid argon with no sub-volumes in it. 
 
-The volTPC contains many volTPCPlaneXXX volumes that describe the wire planes. The volTPCPlaneXXX volume contains many volTPCWireXXX volumes that each describe a wire in the detector. Figure~\ref{lar40.img} shows a detector built in LArSoft.
-
-The Geant4 binding and the ROOT binding support the GDML import and export for reading GDML files and writing out GDML files.
-
-\begin{figure}[h]
-\centering
-\caption{The LAr40 detector is shown here as built from the gdml scripting language in LArSoft. There are 2x3x18 Anode Plane Assemblies in each of two 20 ktonne LAr volumes. Each cryostat is surrounded in rock whose composition is typical of that found at the DUSEL 800 feet level.}
-\includegraphics[width=2.0in]{./mtrls/imgs/20111024_lbne_w_APAs2.png}
-\label{lar40.img}
-\end{figure}
-
+The TPC volume contains many TPCPlaneXXX volumes that describe the wire planes. The TPCPlaneXXX volume contains many TPCWireXXX volumes that each describe a wire in the detector. The Geant4 binding and the ROOT binding support the GDML import and export for reading GDML files and writing out GDML files.
                     
 \section{Simulation Mechanics}
 
 \subsection{Data Product Description}
 LArSoft simulation jobs are modular in nature, with each module reading input data objects and writing output data objects to the event.  
 As the readout electronics differ for each experiment using LArSoft, each
-experiment must provide a detailed simulation of its electronics.  This electronics simulation is currently well-modeled for ArgoNeuT, and is modeled for MicroBooNE with the circuit's LaPlace transform, and a good first approximation place-holder exists for LAr40. 
-
+experiment must provide a detailed simulation of its electronics. 
 \subsection{Adaptations for Using G4}
 - LArSoft specific adaptations for using G4 (the user action lists and readout geometries)
 The truth particles generated in the event generator step are passed to a Geant4 based detector simulation called LArG4.  The geometry GDML file is parsed to create a Geant4 detector description using the built-in GDML parser, which interfaces to LArSoft via the DetectorConstruction LArSoft class.
@@ -197,7 +199,7 @@ NEED WORDS
 Optical physics simulations in LArSoft can take one of two forms: full or fast 
 simulation.  
 \subsubsection{Full Optical Simulation}
-The full simulation involves stepping every optical photon individually through the detector volume.  Typical photon yields for an event cause this to be a computationally intensive procedure. The OpticalPhysics physics constructor has been specially adapted for LArSoft and includes scintillation and Cerenkov production, Rayleigh scattering, reflections at boundaries, absorption at boundaries and in the bulk, and wavelength shifting physics processes.  The configurations of these are described below.
+The full simulation involves stepping every optical photon individually through the detector volume.  Typical photon yields for an event cause this to be a computationally intensive procedure. The physics constructor has been specially adapted for LArSoft and includes scintillation and Cerenkov production, Rayleigh scattering, reflections at boundaries, absorption at boundaries and in the bulk, and wavelength shifting physics processes.  The configurations of these are described below.
 
 Scintillation production is configured with a photon momentum spectrum of 9.7 ?? 1 eV and a yield of 24,000 photons per MeV of energy loss, incorporating both a fast and a slow component, which can be scaled by a quenching factor specified for each scintillating particle.  These quenching factors, and the possibility of utilizing a more systematic specification of the quenching per particle, require further investigation. Cerenkov photons are produced with yields and energies corresponding to the standard Frank-Tamm spectrum of Cerenkov radiation.\
 \
@@ -232,34 +234,33 @@ The reconstruction algorithms in LArSoft have benefited from several advances in
 \hspace*{2cm}
 \begin{figure}[h]
 \centering
-\caption{This flow chart shows the objects created along the reconstruction chain in LArSoft.}
+\caption{This flow chart shows the objects created along a possible reconstruction chain in LArSoft.}
 \includegraphics[width=4.0in]{./mtrls/imgs/LArSoft-Recon-Flow-Soderberg.png}
 \label{flow}
 \end{figure}
+
+ADD picture -- Another reconstruction chain in LArSoft
 
 Reconstruction in LArSoft has both 2D and 3D portions. The reconstruction does not have to proceed by building 2D information before creating 3D information, but the option to do so exists. 
 
 \subsection{Organization of Algorithms}
 
-One approach to finding well specified 3D regions of event activity is called the Seed
-Finding algorithm. The Bezier Tracking algorithm makes use of these regions. These algorithms were developed for the MicroBooNE experiment within the LArSoft framework.\cite{Seed-Bezier}
- 
-A seed is defined by a three dimensional point, and a direction vector with a length which extends in both directions. The goal of the SeedFinder algorithm is to identify regions where the TPC
-activity across all planes in the TPC indicates an unambiguous straight section, and provide information
-about these sections. Seed finding is an effective way
-of finding unambiguous sections in complicated events, and is likely to be a part of the 3D reconstruction
-within LArSoft as a precursor to 3D tracking algorithms. 
-
-Bezier tracking is one method of establishing the trajectories of long, curved tracks, and it appears to be effective for simple topologies such as cosmic ray muon tracks. It is likely that more complicated events will require more advanced algorithms, and in particular, Seed Finding and Bezier Tracking are unlikely to be the appropriate reconstruction technology for very low energy tracks, or complicated events such as electromagnetic showers.
+What is an algorithm? How do they relate to modules?
 
 \subsection{Implementation Plan for Algorithms and Modules}
 NEED WORDS.
 
 \subsection{Unique aspects of LArSoft Reconstruction}
 
-LArSoft contains an event display to understand neutrino events in liquid argon. Reconstruction objects and raw information may be added and removed. Events can be specified for viewing with MC truth info overlaid, if applicable. Zooming features allow insight into the tiniest features around vertices.
-
-The display has been tested with Monte Carlo and ArgoNeuT data, and the code has been written with ease of generalization to MicroBooNE and LAr40 in mind.  
+\subsection{Event Visualization}
+LArSoft has an event display.
+It can be used for
+\begin{enumerate}
+\item{MC}
+\item{Data}
+\item{2D}
+\item{3D}
+\end{enumerate}  
 
 Figure~\ref{argo.evd} shows an example event display for an ArgoNeuT data event.
 
@@ -273,7 +274,6 @@ Figure~\ref{argo.evd} shows an example event display for an ArgoNeuT data event.
 
 
 
-LArSoft  benefits from the experience of multiple experiments.  Each LArTPC provides essentially the same basic information after accounting for small detector differences.  Thus, algorithms developed for one experiment can be directly used by another, as long as the differences in geometry are properly accounted for in the algorithms.  
                
 \section{Analysis Mechanics}
 
@@ -315,6 +315,7 @@ NEED WORDS.
 \bibitem{wcsim} https://wiki.bnl.gov/dusel/index.php/Simulation/Software
 \bibitem{ester} Ester, M., Kriegel, H.-P., Sander, J., and Xu, X. 1996. "A density-based algorithm for discovering clusters in large spatial databases with noise," Proc. 2nd Int. Conf.
 \bibitem{art-ref} https://cdcvs.fnal.gov/redmine/projects/artdaq
+\bibitem{cry} http://nuclear.llnl.gov/simulation/
 \bibitem{gian} Petrillo, Gianluca, 2014. "LArSoft: simulation and reconstruction for Liquid Argon TPC," Liquid Argon TPC R\&D Workshop, Fermilab.
 \bibitem{codetenants} https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/The\_rules\_and\_guidelines
 \bibitem{git-control}https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/\_The\_developer\_environment\_
