@@ -76,7 +76,7 @@
 \address{PO Box XYZ, MS309, Fermi National Accelerator Lab, Batavia, IL, USA, 60510-5011}
 \ead{brebel@fnal.gov}
 \author{William Seligman}
-\address{}
+\address{Columbia University Nevis Laboratories, PO Box 137, Irvington, NY, USA, 10533}
 \ead{}
 \author{Erica Snider}
 \address{}
@@ -148,7 +148,13 @@ LArSoft makes use of the NuSoft packages that provide a common interface to even
 There are four different ways to create events for LArSoft:
 \begin{enumerate}
 \item{CRY - a third-party package to simulate cosmic rays documented at \cite{cry}}
-\item{GENIE - external neutrino interaction generator used to produce neutrinos in the Monte Carlo simulation}
+\item{External neutrino interaction generators used to produce neutrinos in the Monte Carlo simulation. There are several generators which can supply input to LArSoft:}
+\begin{enumerate}
+\item{GENIE\cite{genie} - the standard neutrino event generator in LArSoft}
+\item{NuWro\cite{nuwro} - a neutrino event generator with potentially improved spectral functions for liquid argon}
+\item{GIBUU\cite{gibuu} - }
+\item{NUANCE\cite{nuance} - an older neutrino event generator used in MiniBooNE; it is available to compare the results of MiniBooNE and MicroBooNE simulations}
+\end{enumerate}
 \item{Single - creation of single participle spill or multiple particles with the initial position, momenta, and the spread of momenta and starting positions specified in the job file.}
 \item{LightSource - simulation of placing an extended, isotropic light source within the TPC volume to generate a stream of photons.}
 \end{enumerate}
@@ -316,6 +322,9 @@ NEED WORDS.
 \bibitem{ester} Ester, M., Kriegel, H.-P., Sander, J., and Xu, X. 1996. "A density-based algorithm for discovering clusters in large spatial databases with noise," Proc. 2nd Int. Conf.
 \bibitem{art-ref} https://cdcvs.fnal.gov/redmine/projects/artdaq
 \bibitem{cry} http://nuclear.llnl.gov/simulation/
+\bibitem{genie} C.Andreopoulos et al., The GENIE Neutrino Monte Carlo Generator, Nucl.Instrum.Meth.A614:87-104,2010.
+\bibitem{gibuu} O. Buss, T. Gaitanos, K. Gallmeister, H. van Hees, M. Kaskulov, O. Lalakulich, A.B. Larionov, T. Leitner, J. Weil, U. Mosel (Giessen U.). Jun 2011. ``Transport-theoretical Description of Nuclear Reactions,'' Phys.Rept. 512 (2012) 1-124
+\bibitem{nuance} D. Casper, Nucl.Phys.Proc.Suppl. 112 (2002) 161-170
 \bibitem{gian} Petrillo, Gianluca, 2014. "LArSoft: simulation and reconstruction for Liquid Argon TPC," Liquid Argon TPC R\&D Workshop, Fermilab.
 \bibitem{codetenants} https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/The\_rules\_and\_guidelines
 \bibitem{git-control}https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/\_The\_developer\_environment\_
@@ -323,10 +332,3 @@ NEED WORDS.
 \clearpage 
 
 \end{document}
-
-
-
-
-
-
-
