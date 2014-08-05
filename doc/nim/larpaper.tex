@@ -42,59 +42,64 @@
 \title{The Liquid Argon Offline Software Package: LArSoft} 
 \author{Jonathan Asaadi}
 \address{}
-\ead{}
+\ead{jaasaadi@syr.edu}
 \author{Bruce Baller}
 \address{}
-\ead{}
+\ead{baller@fnal.gov}
 \author{Ben Carls}
 \address{}
-\ead{}
-
+\ead{bcarls@fnal.gov}
 \author{Eric Church}
-\address{Yale University, PO Box 500, MS309, Fermi National Accelerator Lab, Batavia, IL, USA, 60510-5011}
+\address{Fermi National Accelerator Lab, Batavia, IL, USA, 60510-5011}
 \ead{echurch@fnal.gov}
 \author{Bonnie Fleming}
-\address{Yale University, PO Box XYZ, Physics Department, Yale University, New Haven, CT, USA, 12345-1234}
+\address{Physics Department, Yale University, New Haven, CT, USA, 12345-1234}
 \ead{bonnie.fleming@yale.edu}
 \author{Herb Greenlee}
-\address{}
-\ead{}
+\address{Fermi National Accelerator Lab, Batavia, IL, USA, 60510-5011}
+\ead{greenlee@fnal.gov}
 \author{Ben Jones}
 \address{}
-\ead{}
+\ead{bjpjones@mit.edu}
 \author{Wes Ketchum}
 \address{}
-\ead{}
+\ead{wketchum@lanl.gov}
+\author{Jim B. Kowalkowski}
+\address{Fermi National Accelerator Lab, Batavia, IL, USA, 60510-5011}
+\ead{jbk@fnal.gov}
 \author{David McKee}
 \address{}
-\ead{}
+\ead{mckee-d@mssu.edu}
 
 \author{Gianluca Petrillo}
-\address{}
-\ead{}
+\address{Fermi National Accelerator Lab, Batavia, IL, USA, 60510-5011}
+\ead{petrillo@fnal.gov}
 \author{Brian Rebel}
-\address{PO Box XYZ, MS309, Fermi National Accelerator Lab, Batavia, IL, USA, 60510-5011}
+\address{Fermi National Accelerator Lab, Batavia, IL, USA, 60510-5011}
 \ead{brebel@fnal.gov}
 \author{William Seligman}
 \address{}
-\ead{}
+\ead{seligman@nevis.columbia.edu}
 \author{Erica Snider}
-\address{}
-\ead{}
+\address{Fermi National Accelerator Lab, Batavia, IL, USA, 60510-5011}
+\ead{rs@fnal.gov}
+\author{Mitchell Paul Soderberg}
+\address{Fermi National Accelerator Lab, Batavia, IL, USA, 60510-5011}
+\ead{soderber@fnal.gov}
 
 \author{Andrzej Szelc}
 \address{}
-\ead{}
+\ead{andrzej.szelc@yale.edu}
 
 \author{Kazuhiro Terao}
 \address{}
-\ead{}
+\ead{kazuhiro@nevis.columbia.edu}
 \author{Matthew Toups}
 \address{}
-\ead{}
+\ead{mtoups@mit.edu}
 \author{Tingjum Yang}
-\address{}
-\ead{}
+\address{Fermi National Accelerator Lab, Batavia, IL, USA, 60510-5011}
+\ead{tjyang@fnal.gov}
 %%\hspace{2cm}                         
 \begin{abstract}
 A common software package for the simulation, reconstruction, and analysis of Liquid Argon TPC (LArTPC) detectors is being developed as a collaboration across multiple experiments at Fermilab, with the core framework supported by Laboratory staff. We describe the architecture of the software and collaboration that provides the value delivered by the common package. We then describe the various components explaining the development and integration model for the common and experiment specific aspects – including the core framework, detector geometry, electronics response, package configuration, and algorithms. Finally we describe how LArSoft is being used, and in development for being used, by the multiple experiments that are participating.
@@ -120,7 +125,7 @@ Liquid argon detectors see every nuance of the event. LArSoft applies reconstruc
 LArSoft is the product of the collaboration between the following experiments and Fermilab.
 \begin{enumerate}
 \item ArgoNeuT
-\item LArlAt
+\item LArIAT
 \item MicroBooNE
 \item LBNE
 \item LAr1-ND
@@ -193,8 +198,13 @@ NEED WORDS.
 NEED WORDS
 
 \subsection{Incorporating Magnetic Fields}
-- extensions related to incorporating magnetic fields
-NEED WORDS
+LArSoft provides limited support for simulating magnetic
+fields. A constant and uniform field may be specified
+throughout any single volume (and it's sub-volumes) of the Geant
+geometry, and will be respected by Geant's particle tracking
+algorithms. There is currently no support for altered electron
+drift directions, nor any explicit support for analyzing events
+in the presence of a non-zero magnetic field.\footnote{Both of these features are planned.}
 \subsection{Optical Simulation}
 Optical physics simulations in LArSoft can take one of two forms: full or fast 
 simulation.  
@@ -292,21 +302,27 @@ NEED WORDS.
 \section{Getting Software and Benchmarking it}
 \subsection{Ways to Contribute}
 
-LArSoft is hosted in GIT repositories with ten repositories containing general software, and experiment-specific repositories for digitization code and Configuration files. MultiRepository Build (MRB) compiles code across GIT repositories. Each repository has a test area and some libraries such as EventGenerator, LArG4, HitFinder, VertexFinger, etc.\cite{gian}
+LArSoft general software is hosted in ten GIT repositories with additional experiment-specific repositories for digitization code and configuration files. MultiRepository Build (MRB) compiles code across GIT repositories. Each repository has a test area and some libraries such as EventGenerator, LArG4, HitFinder, VertexFinder, etc.\cite{gian}
 
-Although no one has been identified to vet all code going into a release, there are spot checks and collaboration to enable everyone to be able to contribute to LArSoft. Software that is is violation of the tenants listed at \cite{code tenants} results in discussion with the appropriate experiment spokesperson. Basically, the idea is lean, modular code that is detector agnostic.  
+To avoid having one developer's code negatively impact other software and to allow for vetting before others use the new software, no development takes place directly on the develop branch of the repository. LArSoft uses the git-flow\cite{git-flow} model which makes it easy for users to have a private version of the software they are working on. Nothing gets included in the develop branch until the changes are tested.\cite{git-control} All LArSoft developers are expected to follow this workflow model in order to maintain the integrity of the develop branch.
 
-\subsection{Unit Testing}
-LArSoft does not run unit tests or regression tests, though modulo manpower has been suggested to the committee.
-All LArSoft code is archived in a set of repositories based on the git version control system.
-The central concepts are that no development takes place directly on the develop branch -- this is what feature branches, release branches, or hotfix branches are to be used for -- and nothing gets pushed to the reference develop branch until the changes are tested.\cite{git-control}
+A group of people, the librarians, vet the code going into all releases. The librarians examine the changes made to the software in detail as well as looking at the bigger picture to ensure the software module performs the expected task(s). In particular, they ensure that the new code does not negatively impact other LArSoft software. Librarians also ensure the new code is documented and that tests are provided.
 
-All LArSoft developers are expected to follow this workflow model in order to maintain the integrity of the reference "develop" and "master" branches.
+Librarians interact with the authors until the code meets the tenants listed at \cite{code-tenants}. LArSoft code is intended to be usable by Liquid Argon TPC with any number of planes, wires, or PMTs. In addition, the code should be flexible and well-documented. 
 
-Pursuant to this goal, developers are expected to fully test changes in a local branch that is up to date with the reference repository before pushing those changes to the reference develop branch. 
-\subsection{Typical Memory and CPU Usage}
-NEED WORDS.
+\subsection{Testing}
 
+In LArSoft, there is unit testing and integration testing which includes regression tests. The integration tests are written by the author, but may be tested by other people in the project as well as the author. It must be possible to run integration tests automatically as well.
+
+LArSoft has set up a Continuous Integration system based on Jenkins\cite{jenkins} that routinely performs a sequence of tests including unit tests, integration tests and regression tests. On failure, the automatic system notifies LArSoft personnel who contact the responsible person(s) to fix the error.
+
+\subsection{Resource Usage}
+
+A rough estimate of resource usage can be optained by running standard ART services called TimeService and SimpleMemoryCheck. TimeService gives an estimate of the time used by the module to perform its task. SimpleMemoryCheck monitors the usage of memory (RAM) by the whole program. In order for jobs to run smoothly in a GRID or remote environment, the job should use less than 2 Gigabyte of memory, and less than 48 hours (Gianluca will check) of CPU time.
+
+A resource coordinator in LArSoft cheeks for excessive usage, and if found, analysis is done using tools like Valgrind\cite{valgrind}, Gperftools\cite{gperf}, and Allinea.\cite {allinea}.
+The code author is notified by the resource coordinator of the issue and they develop a solution to the resource problem. Most typical problems relate to the use of data structures, and can be solved by following the ART guidelines.\cite{art-guide}
+ 
 \section{Summary}
 NEED WORDS.
 \section{References}
@@ -317,8 +333,14 @@ NEED WORDS.
 \bibitem{art-ref} https://cdcvs.fnal.gov/redmine/projects/artdaq
 \bibitem{cry} http://nuclear.llnl.gov/simulation/
 \bibitem{gian} Petrillo, Gianluca, 2014. "LArSoft: simulation and reconstruction for Liquid Argon TPC," Liquid Argon TPC R\&D Workshop, Fermilab.
-\bibitem{codetenants} https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/The\_rules\_and\_guidelines
-\bibitem{git-control}https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/\_The\_developer\_environment\_
+\bibitem{git-flow} https://cdcvs.fnal.gov/redmine/projects/cet-is-public/wiki/Git\_flow\_quick\_start
+\bibitem{git-control} https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/\_The\_developer\_environment\_
+\bibitem{code-tenants} https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/The\_rules\_and\_guidelines
+\bibitem{jenkins} http://jenkins-ci.org/
+\bibitem{valgrind} http://valgrind.org/
+\bibitem{gperf} https://code.google.com/p/gperftools/
+\bibitem{allinea} http://www.allinea.com/
+\bibitem{art-guide} https://cdcvs.fnal.gov/redmine/projects/art/wiki/Guide\_to\_writing\_and\_using\_services
 \end{thebibliography}
 \clearpage 
 
