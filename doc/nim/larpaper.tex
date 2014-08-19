@@ -59,7 +59,7 @@
 \address{Fermi National Accelerator Lab, Batavia, IL, USA, 60510-5011}
 \ead{greenlee@fnal.gov}
 \author{Ben Jones}
-\address{}
+\address{Massachusetts Institute of Technology, 77 Massachusetts Ave, Cambridge, MA 02139}
 \ead{bjpjones@mit.edu}
 \author{Wes Ketchum}
 \address{}
@@ -205,26 +205,76 @@ geometry, and will be respected by Geant's particle tracking
 algorithms. There is currently no support for altered electron
 drift directions, nor any explicit support for analyzing events
 in the presence of a non-zero magnetic field.\footnote{Both of these features are planned.}
-\subsection{Optical Simulation}
-Optical physics simulations in LArSoft can take one of two forms: full or fast 
-simulation.  
-\subsubsection{Full Optical Simulation}
-The full simulation involves stepping every optical photon individually through the detector volume.  Typical photon yields for an event cause this to be a computationally intensive procedure. The physics constructor has been specially adapted for LArSoft and includes scintillation and Cerenkov production, Rayleigh scattering, reflections at boundaries, absorption at boundaries and in the bulk, and wavelength shifting physics processes.  The configurations of these are described below.
 
-Scintillation production is configured with a photon momentum spectrum of 9.7 ?? 1 eV and a yield of 24,000 photons per MeV of energy loss, incorporating both a fast and a slow component, which can be scaled by a quenching factor specified for each scintillating particle.  These quenching factors, and the possibility of utilizing a more systematic specification of the quenching per particle, require further investigation. Cerenkov photons are produced with yields and energies corresponding to the standard Frank-Tamm spectrum of Cerenkov radiation.\
-\
-Rayleigh scattering and photon-absorption process are enabled, where the scattering length is specified at 90 cm for all wavelengths and the absorption length is set to 2000 m (approximately infinite) for all wavelengths, for the purposes of preliminary studies.  The vast majority of photons produced are 128-nm scintillation photons, so we do not expect neglecting the wavelength dependence of these parameters to cause a significant problem.\
-\
-A simplified reflectivity model is used, whereby each type of boundary in the detector is supplied with a wavelength dependent total reflectivity and specular/diffuse reflection fraction.   For  preliminary  studies  only the  steel/argon boundaries  at  the  edge of the cryostat are  reflective,  with  all  other  surfaces,  including  wires,  field cage,  etc,  being opaque.   The steel/argon boundaries have a total reflectance of 25%, of which 50% is specular.  
+\subsection{Optical Simulation}
+Optical physics simulations in LArSoft can take one of two forms: full or fast simulation.  Both optical simulations are implemented within LArSoft's GEANT4 based simulation package and make use of its configurable physics list functionality.  This functionality allows LArSoft simulations to define a custom GEANT4 physics list from a set of physics constructors at runtime, and is used to select between full optical, fast optical or no optical simulation. 
+
+\subsubsection{Full Optical Simulation}
+The full simulation involves stepping individual photons through the detector volume.  Each stepping photon is treated as an individual particle in Geant4.  The number of photons stepped is usually reduced by a constant factor representing the optical detector collection efficiency at 128 nm, thereby scaling the photon count at production rather than detection in order to reduce computation time and memory usage. 
+
+The physics constructor for full optical physics in LArSoft has been adapted from the standard GEANT4 optical physics constructor. Default implementations for scintillation and Cerenkov production, Rayleigh scattering and absorption at boundaries and in the bulk are included. The default implementation of wavelength shifting physics processes is also included, although at present most LArSoft experiments incorporate the wavelength shifting physics into an estimate of the optical detector collection efficiency rather than simulating it at the photon-by-photon level.  A customized, faster reflectivity model is implemented, whereby material boundaries have specified diffuse and specular reflectances which for each material boundary type.  
+
+Properties of the liquid argon volume including its optical characteristics are loaded into LArSoft by a dedicated service and as such are globally accessible within the LArSoft framework.  This allows reconstruction as well as simulation algorithms to access important optical properties.  The full optical physics processes within LArSoft are configured as follows:
+
+Scintillation production is configured with a photon momentum spectrum centered at 9.7 eV and a shape which is taken from \cite{spectrum}.  Singlet and triplet scintillation components are included, with time constants of 6 and 1500 ns, although tensions within the literature suggests these will require finer tuning using data from LArSoft experiments \cite{fastslow}.  The scintillation yield can is defined per incident particle type using an extension of the relationship shown in \cite{scintyield}, and the absolute yield for a minimum ionizing particle is set to 24,000 photons per MeV, assuming a constant electric field strength of 500 V / cm. 
+
+Cerenkov photons are produced with yields and energies corresponding to the standard Frank-Tamm spectrum of Cerenkov radiation, given a continuous parameterization of the liquid argon refractive index derived from the references in \cite{RIndex}. Rayleigh scattering and photon-absorption process are enabled, where the scattering length is specified over the range of photon energies from 1.8 eV to 10.8 eV, and is 90 cm at the peak of the argon scintillation spectrum \cite{Rlength}.  The bulk absorption length is set to 2000 m (approximately infinite). Further work to parameterize purity dependent absorption effects may be required, with absorption due to dissolved nitrogen being the most likely additional effect \cite{nitrogen}.
+
+A simplified reflectivity model is used, whereby each type of boundary in the detector is supplied with a wavelength dependent total reflectivity and specular/diffuse reflection fraction.   For  preliminary  studies  only the  steel/argon boundaries  at  the  edge of the cryostat are  reflective,  with  all  other  surfaces,  including  wires,  field cage,  etc,  being opaque.   The steel/argon boundaries have a total reflectance of 25\%, of which 50\% is specular, with these numbers being taken from \cite{reflectances}.  
+
+\begin{figure}[t]
+\centering
+\caption{Illustration of the simple treatment of wireplane absorption in LArSoft}
+\includegraphics[width=6.0in]{./imgs/WireplaneTransmissionCartoon.pdf}
+\label{fig:wireplaneabs}
+\end{figure}
+
+
+Semi-transparent surfaces are also included.  For a given surface, any angularly dependent transmission spectrum can be incorporated.  This allows a modeling of the non-uniform angular dependence of photon transmission through the detector wireplanes.    LArSoft includes derived classes which implement optical attenuation by one or many planes of cylindrical wires which are assumed black to 128 nm light.  A cartoon of the wireplane opacity model is shown in figure \ref{fig:wireplaneabs}.
+
+Photons are counted at detector volumes whose name matches a string supplied to the LArSoft geometry service.  This volume may represent a photomultiplier tube, or else another element defined as optically sensitive, for example, a wavelength shifting surface. At geometry construction time, the volumes matching the appropriate name string in the gdml file are assigned optical detector IDs and become sensitive within the LArSoft simulation.
+
+The sensitive elements are placed in a separate GEANT4 parallel world geometry (one of three used in LArSoft - see figure \ref{fig:parallelgeom}).  Only photons are tracked in this geometry, which ensures that the optical  detection process is triggered only for optical photons.  This scheme also means that photon step size is not limitted by the TPC voxel size, which provides a significant performance improvement. Upon photon detection, tracking of the photon is stopped and information about its arrival time and detection location are stored in a detected photon table.  At the end of the run, this table is queried to generate simulated photon data products to store in the event.  The same table is filled by the fast simulation method, and hybrid fast and full simulations can be run.  One use case for such a hybrid simulation would be the fast simulation of scintillation photons but full simulation for Cerenkov photons, which have a directionality and so cannot be consistently treated by the fast simulation.
+
+
+\begin{figure}[t]
+\centering
+\caption{A cartoon which illustrates the three parallel simulation geometries used in the LArSoft
+GEANT4 implementation.}
+\includegraphics[width=6.0in]{./imgs/ParallelGeomScheme.pdf}
+\label{fig:parallelgeom}
+\end{figure}
 
 \subsubsection{Fast Optical Simulation Modules}
 
-Since the stepping of every photon generated in an event is a computationally intensive process, an alternative, fast library sampling simulation improves efficiency by not requiring stepping particles to know about the presence of optical voxels, but rather supply a modified scintillation process that fills the PhotonVoxelList with the map of scintillation photon production across the detector volume. 
-The optical fiducial volume is divided into optical voxels, and the scintillation light production intensity and time profile in each voxel is recorded.  The sensitive detector configuration is somewhat different to that applied to the charge voxels, since the isotropic light production is a result of a very specific physics process.  The photon voxels are defined separately to charge voxels, since they will undergo a separate size optimization.
+Since the number of optical photons generated per event is of order tens of millions per GeV, full optical simulation is a very computationally intensive process.  Since scintillation in argon is isotropic, the visibility (defined as the fraction of generated photons which will reach a given optical detector) can be pre-calculated at each point in the detector.  The fast optical simulation takes this approach, to avoid stepping individual photons during routine simulation jobs.
 
-By comparing the intensity of the scintillation light source present in each voxel in the event to the intensity of the light sources used to generate the library file, and then applying Poisson fluctuations, a number of photons to sample for each PMT in the geometry is calculated.  A set of photons are sampled from the library file, their detection time is smeared by the time profile of scintillation in each voxel, and by combining the expected responses from the light in each voxel, a PMTHitCollection is generated representing the expected detector response for the event.
+The liquid argon volume of the detector is coarse-grained into optical voxels, the size of which must be chosen to be smaller than the resolution of the optical system but can be significantly larger than the TPC voxelization scale.  The optical fiducial volume incorporates the all detector volumes which are visible to the optical system, which in general extends further than the TPC fiducial volume.  By default, the complete cryostat volume is optically voxelized, although if there are invisible regions for a specific detector then a smaller optically active volume can be specified.
 
-The photon library is both geometry and voxelization scheme specific, and changes to either require a full regeneration of the library, which is a one-time computationally intensive job.  The LightSource event generator supplies the intense sources of 9.7 eV photons for library generation, and all optical photons are stepped using the full optical physics simulation. The PMTHitCollections produced by LArG4 for light sources placed in each voxel, as well as the light source intensity, are stored in the library file using a module which is a part of the PhotonPropagation package.  
+A dedicated run of the full optical simulation can be made to create a lookup table which contains the visibility of each voxel to each optical detector.  This run creates a specified number of isotropic 128 nm photons, uniformly distributed across each voxel volume at time t=0.  These photons propagate and are detected using the same mechanics as the full photon simulation.  After photon propagation, the number detected photons at each optical detector is used to build the optical visibility lookup table.  This process is automated by a dedicated photon visibility service, which communicates with the event generation, simulation and analysis parts of the simulation chain to ensure they are correctly configured when a look table building job is run.
+
+Once the visibility table has been generated, the probability that a given 128 nm photon will reach a specified optical detector can be quickly accessed using the photon visibility service which is available to both simulation and reconstruction modules.  The LArSoft GEANT4 simulation can be configured to include the fast optical physics constructor which implements the lookup-based fast scintillation process within simulations. The generation parameters for scintillation light in the fast scintillation process are equivalent to those used in the full simulation.  However, instead of placing optical photons onto the GEANT4 particle stack, detected optical photons are inserted directly into the detected photon table probabilistically, based on the visibility of the detector location where the scintillation occurred.  The arrival times of the photons are also smeared based on the distribution of production times.  The sum of detected photons from each voxel where scintillation emission occured gives the total optical detector response.
+
+The photon library is both geometry and voxelization scheme specific, and changes to either require a full regeneration, which is a one-time computationally intensive job.  The effects of rayleigh scattering and absorption are also built into the visibility table.  Changes to the argon scintillation production properties and optical detector efficiencies, on the other hand, can be made without regenerating the table.
+
+\begin{figure}[t]
+\centering
+\caption{An example of slices through an optical visibility table. This shows the visibility at various points
+in the MicroBooNE detector.  This plot was made from the optical visibility table using the optical library
+analyzer module.}
+\includegraphics[width=6.0in]{./imgs/SampleOpticalMap.pdf}
+\label{fig:opticalmap}
+\end{figure}
+
+\subsubsection{Tools for Optical Simulations}
+
+There are several tools in LArSoft which are can be used for optical simulation validation and basic analysis.  The photon counter module is an analyzer which produces analysis trees and histograms representing the properties of the detected photons in each optical detector.  The module extracts per-optical-detector and per-event information and can be used for both full and fast simulation outputs.  This same module is also used to generate the optical visibility library used by the LArSoft fast simulation.
+
+There is a light source event generator which can be configured to generate photons at a specified wavelength and with a specified geometry and time.  Optionally the light source can be configured to step through each optical voxel event-by-event, or else step through a custom set of arbitrary geometrical configurations specified in a text file.  This event generator is particularly useful for investigating the optical response to different event geometries and is used in the generation of the photon visibility library.
+
+A library analyzer module exists to produce detector visibility maps and other histograms based on the loaded visibility library.  This module is used to validate the optical library and obtain information about the detector response to light deposits at different points.  Some histograms produced by this module for the MicroBooNE optical library are shown in figure \ref{fig:opticalmap}.
+
+
 
 \section{Reconstruction Mechanics}
 \subsection{Data Product Description}
@@ -340,6 +390,14 @@ NEED WORDS.
 \bibitem{valgrind} http://valgrind.org/
 \bibitem{gperf} https://code.google.com/p/gperftools/
 \bibitem{allinea} http://www.allinea.com/
+\bibitem{nest} http://nest.physics.ucdavis.edu/site/
+\bibitem{spectrum} E. Morikawa et al. "Argon, krypton, and xenon excimer luminescence: From the dilute gas to the condensed phase." J. Chem. Phys, 91:1469, 1989.
+\bibitem{scintyield} Tadayoshi Doke, Akira Hitachi, Jun Kikuchi, Kimiaki Masuda, Hiroyuki Okada, and Eido Shibamura. "Absolute scintillation yields in liquid argon and xenon for various particles." Japanese Journal of Applied Physics, 41(Part 1, No. 3A):1538–1545, 2002.
+\bibitem{fastslow} A Hitachi et al. "Effect of ionization density on the time dependence of luminescence from liquid argon and xenon", Phys. Rev. B 27:5279 (1983). P. Cennini et al, "Detection of scintillation light in coincidence with ionizing tracks in a liquid argon time projection chamber." NIM A: 432(23):240–248, 1999.  R. Acciarri et al, Effects of Nitrogen contamination in liquid Argon, 2008 JINST 5 (2010) P06003.  D. Whittington and S. Mufson, "Scintillation Light from Cosmic-Ray Muons in Liquid Argon", 2014, arXiv:1408.1763
+\bibitem{reflectances} M Antonello et al.  "Analysis of Liquid Argon Scintillation Light Signals with the ICARUS T600 Detector".  Unpublished.
+\bibitem{nitrogen} B.J.P. Jones et al, "A Measurement of the Absorption of Liquid Argon Scintillation Light by Dissolved Nitrogen at the Part-Per-Million Level", JINST 8 (2013) P07011
+\bibitem{RIndex} A. C. Sinnock and B. L. Smith. "Refractive indices of the condensed inert gases." Phys. Rev. 181:1297–1307, May 1969.   R. K. Teague and C. J. Pings. "Refractive index and the lorentz–lorenz function for gaseous and liquid argon, including a study of the coexistence curve near the critical state." J Chem Phys, 48(11):4973–4984, 1968.
+\bibitem{Rlength} G.M. Seidel, R.E. Lanou, and W. Yao, "Rayleigh scattering in rare-gas liquids", NIM A489 (2002) 189.   N. Ishida et al., "Attenuation length measurements of scintillation light in liquid rare gases and their mixtures using an improved reflection suppresser", NIM A384 (1997) 380. M. Sneep and W. Ubachs, "Direct measurement of the Rayleigh scattering cross section in various gasses", J. Quant. Spectrosc. Radiat. Transf. 92 (2005) 293.
 \bibitem{art-guide} https://cdcvs.fnal.gov/redmine/projects/art/wiki/Guide\_to\_writing\_and\_using\_services
 \end{thebibliography}
 \clearpage 
