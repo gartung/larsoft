@@ -417,26 +417,27 @@ NEED WORDS.
 \subsection{Unique aspects of LArSoft Reconstruction}
 
 \subsection{Event Visualization}
-LArSoft has an event display.
-It can be used for
-\begin{enumerate}
-\item{MC}
-\item{Data}
-\item{2D}
-\item{3D}
-\end{enumerate}  
+An important part of the LArSoft suite is the ability to visually display events. The basic event display is constructed based on ROOT GUI libraries \cite{ROOT}.
+It can be used to display both data and MC events at any stage of their reconstruction, the latter with the corresponding MC truth information. 
+Navigation between events is either by inserting the desired run and event number in the corresponding fields or by means of the ``next`` and "previous'' buttons.
+
+The basic event display window, Fig. \ref{argo.evd} shows projections in wire-time space for each of the views present in the given detector, where the quantity of charge in ADC collected in each wire is denoted by a color scale or intensity of gray-scale. The ADC theshold of what is displayed is a settable parameter. 
+The user has the option of overlaying an MC event with the MC truth tracks color coded by particle type. The main display window is completed by a wire viewer, which shows the time series of a selected single wire in any of the views - the displayed wire can be chosen via mouse click or a field entry window.
+All of the above pads have zoom capability. The user can choose what reconstructed objects are displayed, and which module created them, by using a special menu window or by specifying this in the FHICL configuration file at runtime. 
+
+The event display also has additional windows that allow different visualization of some of the reconstruction objects. These include the 3D event display, as shown in fig. \ref{argo.evd} (right) where the 3D Track objects can be viewed in a 3D depiction of the detector, a set of 2D projection views where the :tracks are shown in the X-Z and Y-Z plane instead of the wire-time views, and a Calorimetry view where the track and Shower dE/dx depositions are plotted against MC predictions allowing visual particle identification. 
+
+Since the event display is a LArSoft module it can be run in sequence with other modules in the same job. In this case, using a menu window it is possible to change the FHICL parameters of other modules running in the same job. Using this capability and seeing the results of these changes in the event displays is a useful debugging tool in algorithm development.
 
 Figure~\ref{argo.evd} shows an example event display for an ArgoNeuT data event.
 
 \hspace*{2cm}
 \begin{figure}[h]
 \centering
-\caption{A data event in ArgoNeuT, viewed with the event display in LArSoft. Among other emitted particles, two $\pi^0$s are evident.}
+\caption{THIS IS CHANGING -- Andrzej M. Szelc A data event in ArgoNeuT, viewed with the event display in LArSoft. Among other emitted particles, two $\pi^0$s are evident.}
 \includegraphics[width=4.0in]{./imgs/ArgoNeuT_event.jpg}
 \label{argo.evd}
 \end{figure}
-
-
 
                
 \section{Analysis Mechanics}
@@ -495,6 +496,7 @@ NEED WORDS.
 
 \bibitem{reflectances} M Antonello et al.  "Analysis of Liquid Argon Scintillation Light Signals with the ICARUS T600 Detector", Unpublished.
 \bibitem{ester} Ester, M., Kriegel, H.-P., Sander, J., and Xu, X. 1996. "A density-based algorithm for discovering clusters in large spatial databases with noise," Proc. 2nd Int. Conf.
+\bibitem{ROOT} http://root.cern.ch/drupal/
 \bibitem{gian} Petrillo, Gianluca, 2014. "LArSoft: simulation and reconstruction for Liquid Argon TPC," Liquid Argon TPC R\&D Workshop, Fermilab.
 \bibitem{git-flow} http://nvie.com/posts/a-successful-git-branching-model/
 \bibitem{git-control} https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/\_The\_developer\_environment\_
