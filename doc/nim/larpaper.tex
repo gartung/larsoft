@@ -416,6 +416,16 @@ NEED WORDS.
 
 \subsection{Unique aspects of LArSoft Reconstruction}
 
+\subsection{One Example Reconstruction Chain in LArSoft}
+We describe one reconstruction chain that is being used by the MicroBoone experiment to reconstruct cosmic and neutrino interactions. A LArTPC typically saves raw data in the format of ADC counts as a function of TPC ticks for each wire. The signal can have a unipolar shape if it is on a collection wire or a bipolar shape if it is on an unshielded collection wire. The first step in the reconstruction is to convert the raw signal from each wire to a standard shape such as a Gaussian shape. This is achieved by passing the raw data through a calibrated deconvolution algorithm, which filters noise and corrects for the electronics response and the effect of the drift field response to produce the best estimates of the drift charge and time. 
+[Gaussian Hit Finder - Jonathan]
+[Fuzzy Cluster - Ben C.]
+[TrackKalmanHit - Herb]
+[Calorimetry and PID - Tingjun]
+[Shower - Andrzej]
+[PANDORA - Andy]
+[Optical - Wes]
+
 \subsection{Event Visualization}
 An important part of the LArSoft suite is the ability to visually display events. The basic event display is constructed based on ROOT GUI libraries \cite{ROOT}.
 It can be used to display both data and MC events at any stage of their reconstruction, the latter with the corresponding MC truth information. 
