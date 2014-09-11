@@ -190,7 +190,34 @@ experiment must provide a detailed simulation of its electronics.
 The truth particles generated in the event generator step are passed to a Geant4 based detector simulation called LArG4.  The geometry GDML file is parsed to create a Geant4 detector description using the built-in GDML parser, which interfaces to LArSoft via the DetectorConstruction LArSoft class.
 
 \subsubsection{User Action Lists}
-NEED WORDS.
+Geant4 includes several ``user hook'' routines to modify Geant4's
+standard processing. LArG4 makes use of Geant4's built-in hooks that
+are called at the beginning and end of each event, track, and step to
+record information related to the secondary particles created during
+the detector simulation. These hooks are organized in the class
+G4Base/UserAction, which is part of the nutools package external to
+LArSoft. UserAction uses a variant of the Abstract Factor design
+pattern \cite{designpatterns} to simplify the handling of multiple
+simulation tasks, each of which might require access to Geant4's user
+hooks.
+
+The routine LArG4/ParticleListAction implements the interface provided
+by G4Base/UserAction. The overall purpose of the routine to record the
+information from each Geant4-generated secondary particle to create
+the MCParticle data product, and return a list of all such particles
+created during a given event.
+
+\begin{itemize}
+
+\item At the start of each particle track:
+
+  \begin {itemize}
+
+  \item Determine if the particle is a primary particle, that is, if was created by the event generator and is contained within an MCTruth data product. 
+
+  \end {itemize}
+
+\end{itemize}
 
 \subsubsection{Readout Geometries}
 NEED WORDS
@@ -331,6 +358,7 @@ NEED WORDS.
 \bibitem{gibuu} O. Buss, T. Gaitanos, K. Gallmeister, H. van Hees, M. Kaskulov, O. Lalakulich, A.B. Larionov, T. Leitner, J. Weil, U. Mosel (Giessen U.). Jun 2011. ``Transport-theoretical Description of Nuclear Reactions,'' Phys.Rept. 512 (2012) 1-124. http://gibuu.hepforge.org
 \bibitem{nuance} D. Casper, Nucl.Phys.Proc.Suppl. 112 (2002) 161-170
 \bibitem{hepmc} Matt Dobbs (Victoria U.) , Jorgen Beck Hansen (CERN). ``The HepMC C++ Monte Carlo event record for High Energy Physics,'' Comput.Phys.Commun. 134 (2001) 41-46.
+\bibitem{designpatterns} Gemma et al., ``Design Patterns,'' Addison-Wesley Longman, Inc., 1995. 
 \bibitem{gian} Petrillo, Gianluca, 2014. "LArSoft: simulation and reconstruction for Liquid Argon TPC," Liquid Argon TPC R\&D Workshop, Fermilab.
 \bibitem{codetenants} https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/The\_rules\_and\_guidelines
 \bibitem{git-control}https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/\_The\_developer\_environment\_
