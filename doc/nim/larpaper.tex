@@ -196,7 +196,7 @@ are called at the beginning and end of each event, track, and step to
 record information related to the secondary particles created during
 the detector simulation. These hooks are organized in the class
 G4Base/UserAction, which is part of the nutools package external to
-LArSoft. UserAction uses a variant of the Abstract Factor design
+LArSoft. UserAction uses a variant of the Abstract Factory design
 pattern \cite{designpatterns} to simplify the handling of multiple
 simulation tasks, each of which might require access to Geant4's user
 hooks.
@@ -207,15 +207,53 @@ information from each Geant4-generated secondary particle to create
 the MCParticle data product, and return a list of all such particles
 created during a given event.
 
+The basic logic is relatively straight-forward: record particle
+information at the beginning of each track, provide a ``readout''
+method to return the particle list at the end of each event. However,
+there a number of exceptions or enhancements to this basic algorithm:
+
 \begin{itemize}
 
-\item At the start of each particle track:
+\item Geant4 assigns a unique ID number to every particle it tracks
+  during an event: the trackID. At the start of a particle track,
+  Geant4 provides a method call to determine the track ID of the
+  parent particle for a given track, but there is no predefined method
+  for determining the track IDs of any daughter particles produced by
+  Geant4 as it models the propagation of the track through the
+  detector. Therefore, the list of particles must be scanned at the
+  end of the event to fill in the daughter fields of the MCParticle
+  data product.
 
-  \begin {itemize}
+\item Geant4 can generates secondary particles down to a very low
+  energy. This would result in a large number of MCParticle data
+  products included in the output, with energies that are
+  insignificant for reconstruction. Therefore, a threshold cut is
+  applied via a job parameter to supress the output of particles with
+  kinetic energies below a certain value; the default value for this
+  cut is 10 $keV$. However, it possible for a particle with kinetic
+  energy that falls below the cut to generate a particle with energy
+  above it; for example, an atomic nucleus may be excited and have low
+  kinetic energy, then emit a decay particle with a kinetic energy
+  above that cut. This results in ``orphan'' particles, that is,
+  secondary particles in the output with no parent. 
 
-  \item Determine if the particle is a primary particle, that is, if was created by the event generator and is contained within an MCTruth data product. 
+\item For a large number of reconstruction studies, there is no need
+  to store the daughter particles of electromagnetic showers. A job
+  parameter controls whether particles produced in pair production,
+  compton scattering, photoelectric effect, bremstrahlung,
+  annihilation, or ionization should be included in the output; the
+  default value of this parameter is to not include them. 
 
-  \end {itemize}
+\item The MCParticle data product includes a member, MCTrajectory,
+  that can include the complete Geant4 trajectory information for a
+  track; at each step within a particle's trajectory, the Lorenz
+  four-position and four-momentum can be stored. This is useful for
+  event displays and track-fitting studies, but not needed for other
+  studies such as energy calibration. Therefore, a job parameter
+  controls whether or not the complete trajectory is stored for every
+  MCParticle; the alternative is to store just the data for the first
+  and last point of a particle's trajectory. The default value of this
+  parameter is to store the trajectory.
 
 \end{itemize}
 
