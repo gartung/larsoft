@@ -257,8 +257,16 @@ there a number of exceptions or enhancements to this basic algorithm:
 
 \end{itemize}
 
+STILL NEED DESCRIPTION OF USER STACKING ACTION
+
 \subsubsection{Readout Geometries}
-NEED WORDS
+
+The basic purpose of the Geant4 simulation of a LAr TPC detector is to
+model the ionization left by charged particles created by interactions
+in the detector. This information is easy to retrieve using the
+standard Geant4 method G4Step::GetTotalEnergyDeposit. The next step in
+the process is to convert that ionization into electron clusters and
+drift them to the wires of the induction and collection planes. %%%
 
 \subsection{Adding Additional Detectors}
 - hooks for adding in additional detectors outside of the LAr volumes. 
