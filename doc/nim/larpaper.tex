@@ -190,21 +190,22 @@ experiment must provide a detailed simulation of its electronics.
 The truth particles generated in the event generator step are passed to a Geant4 based detector simulation called LArG4.  The geometry GDML file is parsed to create a Geant4 detector description using the built-in GDML parser, which interfaces to LArSoft via the DetectorConstruction LArSoft class.
 
 \subsubsection{User Action Lists}
+\label{sec:useractions}
 Geant4 includes several ``user hook'' routines to modify Geant4's
 standard processing. LArG4 makes use of Geant4's built-in hooks that
 are called at the beginning and end of each event, track, and step to
 record information related to the secondary particles created during
 the detector simulation. These hooks are organized in the class
-G4Base/UserAction, which is part of the nutools package external to
-LArSoft. UserAction uses a variant of the Abstract Factory design
+{\tt G4Base/UserAction}, which is part of the nutools package external to
+LArSoft. {\tt UserAction} uses a variant of the Abstract Factory design
 pattern \cite{designpatterns} to simplify the handling of multiple
 simulation tasks, each of which might require access to Geant4's user
 hooks.
 
-The routine LArG4/ParticleListAction implements the interface provided
-by G4Base/UserAction. The overall purpose of the routine to record the
+The routine {\tt LArG4/ParticleListAction} implements the interface provided
+by {\tt G4Base/UserAction}. The overall purpose of the routine to record the
 information from each Geant4-generated secondary particle to create
-the MCParticle data product, and return a list of all such particles
+the {\tt simb::MCParticle} data product, and return a list of all such particles
 created during a given event.
 
 The basic logic is relatively straight-forward: record particle
@@ -215,7 +216,7 @@ there a number of exceptions or enhancements to this basic algorithm:
 \begin{itemize}
 
 \item Geant4 assigns a unique ID number to every particle it tracks
-  during an event: the trackID. At the start of a particle track,
+  during an event: the track ID. At the start of a particle track,
   Geant4 provides a method call to determine the track ID of the
   parent particle for a given track, but there is no predefined method
   for determining the track IDs of any daughter particles produced by
@@ -225,12 +226,12 @@ there a number of exceptions or enhancements to this basic algorithm:
   data product.
 
 \item Geant4 can generates secondary particles down to a very low
-  energy. This would result in a large number of MCParticle data
+  energy. This would result in a large number of {\tt simb::MCParticle} data
   products included in the output, with energies that are
   insignificant for reconstruction. Therefore, a threshold cut is
   applied via a job parameter to supress the output of particles with
   kinetic energies below a certain value; the default value for this
-  cut is 10 $keV$. However, it possible for a particle with kinetic
+  cut is 10$keV$. However, it possible for a particle with kinetic
   energy that falls below the cut to generate a particle with energy
   above it; for example, an atomic nucleus may be excited and have low
   kinetic energy, then emit a decay particle with a kinetic energy
@@ -244,16 +245,17 @@ there a number of exceptions or enhancements to this basic algorithm:
   annihilation, or ionization should be included in the output; the
   default value of this parameter is to not include them. 
 
-\item The MCParticle data product includes a member, MCTrajectory,
-  that can include the complete Geant4 trajectory information for a
-  track; at each step within a particle's trajectory, the Lorenz
-  four-position and four-momentum can be stored. This is useful for
-  event displays and track-fitting studies, but not needed for other
-  studies such as energy calibration. Therefore, a job parameter
-  controls whether or not the complete trajectory is stored for every
-  MCParticle; the alternative is to store just the data for the first
-  and last point of a particle's trajectory. The default value of this
-  parameter is to store the trajectory.
+\item The {\tt simb::MCParticle} data product includes a member, {\tt
+  simb::MCTrajectory}, that can include the complete Geant4 trajectory
+  information for a track; at each step within a particle's
+  trajectory, the Lorenz four-position and four-momentum can be
+  stored. This is useful for event displays and track-fitting studies,
+  but not needed for other studies such as energy
+  calibration. Therefore, a job parameter controls whether or not the
+  complete trajectory is stored for every {\tt simb::MCParticle}; the
+  alternative is to store just the data for the first and last point
+  of a particle's trajectory. The default value of this parameter is
+  to store the trajectory.
 
 \end{itemize}
 
@@ -264,14 +266,84 @@ STILL NEED DESCRIPTION OF USER STACKING ACTION
 The basic purpose of the Geant4 simulation of a LAr TPC detector is to
 model the ionization left by charged particles created by interactions
 in the detector. This information is easy to retrieve using the
-standard Geant4 method G4Step::GetTotalEnergyDeposit. The next step in
-the process is to convert that ionization into electron clusters and
-drift them to the wires of the induction and collection planes. %%%
+standard Geant4 method {\tt G4Step::GetTotalEnergyDeposit}. The next
+step in the process is to convert that ionization into electron
+clusters and drift them to the wires of the induction and collection
+planes. 
+
+The ionization deposited by a charged particle is not necessarily
+constant along the entire length of a charged-particle track. To
+accurately convert the ionization to electron clusters as described in
+Section~\ref{sec:ionization}, it is necessary to divide the track into
+short segments and apply the ionization procedure to each segment
+individually. There are two ways to approach this in Geant4:
+
+\begin{itemize}
+\item Set the Geant4 step size to a small value for charge-particle tracks in the LAr TPC.
+\item Divide the LAr TPC into smaller sub-volumes, which will force Geant4 to limit the step size to the boundaries of these volumes.
+\end{itemize}
+
+The second approach is taken in LArG4. This procedure permits LArG4 to
+sum the total amount of ionization energy deposited in each
+sub-volume, called a ``voxel'' in analogy with the word ``pixel,'' the
+term for a small area of a two-dimensional image. This in turns allows
+corrections for potential saturation of the liquid argon within the
+voxel, which would be difficult to determine in the first approach.
+
+The ${\Delta}x$, ${\Delta}y$, and ${\Delta}z$ dimensions of the voxels
+are given by user parameters. By default, they are 1/10th the spacing
+between the wires of the induction and collection planes in
+MicroBooNE; the wire spacing is 3$mm$, hence the default voxel size is
+$0.3mm\times0.3mm\times0.3mm$. There is also a ${\Delta}t$-component
+to voxel processing, intended for potential overlay studies; in
+practice it is not used, and is set to 5${\mu}s$.
+
+The voxel readout geometry does not physically exist, and so it is
+implemented using Geant4's ``parallel world'' mechanism. Geant4 tracks
+particles through the regular geometry and any parallel geometries
+simultaneously, limiting steps within the volume boundaries in all of
+them. This is further refined in routine {\tt LArG4/PhysicsList},
+which specifies that only charged particles are to be tracked in the
+parallel voxel geometry (since only charged particles deposit
+ionization energy). (Note that the voxels described in in
+Section~\ref{sec:fullopticalsim} are defined separately in yet another
+parallel geometry, and share no characteristics with the voxels
+described in this Section.)
+
+In {\tt LArG4/LArVoxelReadoutGeometry}, a copy of the LAr TPC geometry
+is placed in a parallel world, then subdivided into voxels; each voxel
+is defined to be a Geant4 sensitive volume. As Geant4 tracks charged
+particles through the parallel voxel geometry, it calls the
+sensitive-detector routine {\tt LArG4/LArVoxelReadout}. The ionization
+is then converted into electron clusters as described in
+Section~\ref{sec:ionization}.
+
+As noted in Section~\ref{sec:ionization}, each {\tt sim::SimChannel}
+data product contains a link between an electron cluster and the
+Geant4 track ID of the ionizing particle that was its source. However,
+if a particle's kinetic energy falls below the user cut described in
+Section~\ref{sec:useractions}, that particle's track ID will not be in
+the group of {\tt simb::MCParticle} data products output by the
+simulation. Is therefore possible to have ``orphaned energy,'' that
+is, electron clusters that cannot be associated with a particle in the
+output. 
+
+The most common reason for ``orphaned energy'' is that the {\tt
+  simb::MCParticle} was not written because it was the daughter
+particle of an electromagnetic shower, and the user has chosen not to
+include these particles in the LArG4 output. Therefore, {\tt
+  LArG4/LArVoxelReadout} calls a method in {\tt
+  LArG4/ParticleListAction} to query the current track ID. If the
+particle is part of an e-m shower, rather than returning the current
+Geant4 track ID, {\tt LArG4/ParticleListAction} responds with the
+track ID of the particle that induced the e-m shower, which is the
+particle normally of interest in shower reconstruction studies.
 
 \subsection{Adding Additional Detectors}
 - hooks for adding in additional detectors outside of the LAr volumes. 
 NEED WORDS.
 \subsection{New Parameterizations for Ionization}
+\label{sec:ionization}
 - description of how new parameterizations for ionization, etc can be added into the simulation including a description of the mechanism for calculating the amount of ionization charge and scintillation light.  It could include a statement of the available options for that calculation (NEST vs decoupled charge and light) and how a user might add a new method.
 NEED WORDS
 
@@ -282,6 +354,7 @@ NEED WORDS
 Optical physics simulations in LArSoft can take one of two forms: full or fast 
 simulation.  
 \subsubsection{Full Optical Simulation}
+\label{sec:fullopticalsim}
 The full simulation involves stepping every optical photon individually through the detector volume.  Typical photon yields for an event cause this to be a computationally intensive procedure. The physics constructor has been specially adapted for LArSoft and includes scintillation and Cerenkov production, Rayleigh scattering, reflections at boundaries, absorption at boundaries and in the bulk, and wavelength shifting physics processes.  The configurations of these are described below.
 
 Scintillation production is configured with a photon momentum spectrum of 9.7 ?? 1 eV and a yield of 24,000 photons per MeV of energy loss, incorporating both a fast and a slow component, which can be scaled by a quenching factor specified for each scintillating particle.  These quenching factors, and the possibility of utilizing a more systematic specification of the quenching per particle, require further investigation. Cerenkov photons are produced with yields and energies corresponding to the standard Frank-Tamm spectrum of Cerenkov radiation.\
