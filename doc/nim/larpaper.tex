@@ -419,7 +419,15 @@ NEED WORDS.
 \subsection{One Example Reconstruction Chain in LArSoft}
 We describe one reconstruction chain that is being used by the MicroBoone experiment to reconstruct cosmic and neutrino interactions. A LArTPC typically saves raw data in the format of ADC counts as a function of TPC ticks for each wire. The signal can have a unipolar shape if it is on a collection wire or a bipolar shape if it is on an unshielded collection wire. The first step in the reconstruction is to convert the raw signal from each wire to a standard shape such as a Gaussian shape. This is achieved by passing the raw data through a calibrated deconvolution algorithm, which filters noise and corrects for the electronics response and the effect of the drift field response to produce the best estimates of the drift charge and time. 
 [Gaussian Hit Finder - Jonathan]
+
 [Fuzzy Cluster - Ben C.]
+
+\subsubsection{Fuzzy Cluster]
+
+After hit finding has completed, the hits in each plane are clustered. The goal of clustering is to categorize hits into individual physics objects as best as possible in 2D. Fuzzy Cluster is such an algorithm and proceeds in five stages. The first stage implements the FLAME clustering algorithm originally developed for the analysis of DNA microarray data~\cite{flame}. The goal of the FLAME clustering algorithm is to break hits on the selected plane into smaller portions to improve memory usage of the second step, the Hough transform. The Hough transform is implemented to identify hits that from line-like objects such as tracks. The particular variant of the Hough transform implemented is the Progressive Probabilistic Hough Transform, which is optimized for speed and light memory usage~\cite{ppht}. 
+
+After lines have been identified in the collection of hits, a set of line merging steps are implemented as the third step to group hits included in the identified lines into track-like and shower-like objects. In the fourth step, the hits not incorporated in lines by the Hough transform are merged into the nearest cluster formed from the identified lines. The hits are only merged with lines provided they satisfy a distance requirement. The fifth and final step runs the DBSCAN algorithm, described in~\cite{dbscan}, clustering algorithm over hits that were not incorporated into lines from the Hough transform or merged with hits already part of a line. 
+
 [TrackKalmanHit - Herb]
 [Calorimetry and PID - Tingjun]
 [Shower - Andrzej]
@@ -517,6 +525,10 @@ NEED WORDS.
 \bibitem{allinea} http://www.allinea.com/
 \bibitem{nest} http://nest.physics.ucdavis.edu/site/
 \bibitem{art-guide} https://cdcvs.fnal.gov/redmine/projects/art/wiki/Data\_Product\_Design\_Guide
+\bibitem{flame} L. Fu et al. "FLAME, A Novel Fuzzy Clustering Method for the Analysis of DNA Microarray Data." BMC Bioinformatics, 8:3, 2007.
+\bibitem{ppht} J. Matas et al. "Robust Detection of Lines Using the Progressive Probabilistic Hough Transform." COMPUT VIS IMAGE UND, 78:1, 1999.
+\bibitem{dbscan} E. Martin et al. "A density-based algorithm for discovering clusters in large spatial databases with noise." Proceedings of the Second International Conference on Knowledge Discovery and Data Mining, 226-231, 1996. 
+
 \end{thebibliography}
 \clearpage 
 
