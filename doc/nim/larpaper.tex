@@ -467,7 +467,8 @@ Librarians interact with the authors until the code meets the tenants listed at 
 
 \subsection{Testing}
 
-In LArSoft, there is unit testing and integration testing which includes regression tests. The integration tests are written by the author, but may be tested by other people in the project as well as the author. It must be possible to run integration tests automatically as well.
+In LArSoft, there is unit testing and integration testing which includes regression tests. Unit tests check very small parts of the code and are run by the author of the code. 
+The integration tests are written by the author of the algorithm or feature that they test. These tests may be executed by other people in the project as well as the author. It must be possible to automatically run unit and  integration tests.
 
 LArSoft has set up a Continuous Integration system based on Jenkins\cite{jenkins} that routinely performs a sequence of tests including unit tests, integration tests and regression tests. On failure, the automatic system notifies LArSoft personnel who contact the responsible person(s), e.g. code authors or librarians, to fix the error.
 
@@ -476,7 +477,7 @@ LArSoft has set up a Continuous Integration system based on Jenkins\cite{jenkins
 A rough estimate of resource usage can be obtained by running standard ART services called TimeService and SimpleMemoryCheck. TimeService gives an estimate of the time used by the module to perform its task. SimpleMemoryCheck monitors the usage of memory (RAM) by the whole program. In order for jobs to run smoothly in a GRID or remote environment, the job should use less than 2 Gigabyte of memory, and less than 48 hours of CPU time.
 
 A resource coordinator in LArSoft cheeks for excessive usage, and if found, analysis is done using tools like Valgrind\cite{valgrind}, Gperftools\cite{gperf}, and Allinea.\cite {allinea}.
-The code author is notified by the resource coordinator of the issue and they develop a solution to the resource problem. Most typical problems relate to the use of data structures, and can be solved by following the ART guidelines.\cite{art-guide}
+The code author is notified by the resource coordinator of the issue and together they develop a solution to the resource problem. Most typical problems relate to the use of data structures, and can be solved by following the ART guidelines.\cite{art-guide}
  
 \section{Summary}
 NEED WORDS.
