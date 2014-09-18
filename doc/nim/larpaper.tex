@@ -61,6 +61,9 @@
 \author{Ben Jones}
 \address{Massachusetts Institute of Technology, 77 Massachusetts Ave, Cambridge, MA 02139}
 \ead{bjpjones@mit.edu}
+\author{Thomas R. Junk}
+\address{Fermi National Accelerator Lab, Batavia, IL, USA, 60510-5011}
+\ead{trj@fnal.gov}
 \author{Wes Ketchum}
 \address{}
 \ead{wketchum@lanl.gov}
@@ -70,7 +73,9 @@
 \author{David McKee}
 \address{}
 \ead{mckee-d@mssu.edu}
-
+\author{Tia Miceli}
+\address{Fermi National Accelerator Lab, Batavia, IL, USA, 60510-5011}
+\ead{miceli@fnal.gov}
 \author{Gianluca Petrillo}
 \address{Fermi National Accelerator Lab, Batavia, IL, USA, 60510-5011}
 \ead{petrillo@fnal.gov}
@@ -148,7 +153,7 @@ ART provides many of the services necessary to operate in a production environme
 
 \subsection{External Packages}
 \subsubsection{Event Generation}
-LArSoft makes use of the NuSoft packages that provide a common interface to event generators, GEANT4 and event display libraries developed for use by all neutrino experiments. The packages used include:    EventDisplayBase, EventGeneratorBase, G4Base, MagneticField, NuReweight and SimulationBase.
+LArSoft makes use of the NuSoft packages that provide a common interface to event generators, Geant4 and event display libraries developed for use by all neutrino experiments. The packages used include:    EventDisplayBase, EventGeneratorBase, G4Base, MagneticField, NuReweight and SimulationBase.
 
 There are several different ways to create events for LArSoft:
 \begin{enumerate}
@@ -182,7 +187,7 @@ The Geometry package contains a general interface into the detector descriptions
 As shown in Figure~\ref{geo-vol.img},
 the highest level volume is World which contains all elements of the geometry to be accounted for in the simulation and should be sized adequately to account for any features of the detector surroundings that are important for the simulation. For example, if there is a huge mass of rock near the detector that could alter the cosmic ray flux from that direction, it should be simulated. There is only one detector enclosure volume which can contain many Cryostat volumes, which in turn can each contain many TPC volumes. Each TPC volume contains only one TPCActive volume, which defines the active volume of liquid argon that is read out by the detector. Any liquid argon that is outside of the drift field would not be part of volTPCActive. It is assumed that volTPCActive is simply a volume of liquid argon with no sub-volumes in it. 
 
-The TPC volume contains many TPCPlaneXXX volumes that describe the wire planes. The TPCPlaneXXX volume contains many TPCWireXXX volumes that each describe a wire in the detector. The GEANT4 binding and the ROOT binding support the GDML import and export for reading GDML files and writing out GDML files.
+The TPC volume contains many TPCPlaneXXX volumes that describe the wire planes. The TPCPlaneXXX volume contains many TPCWireXXX volumes that each describe a wire in the detector. The Geant4 binding and the ROOT binding support the GDML import and export for reading GDML files and writing out GDML files.
                     
 \section{Simulation Mechanics}
 
@@ -234,7 +239,7 @@ samples typically contain mixtures of many different processes and energies, and
 in order to determine what the energy resolution is for a specific kind of process
 or type of reconstructed event, it is important to know what the true values were.
 
-The GEANT4 physics simulation produces additional MCParticle objects, as simulated interactions
+The Geant4 physics simulation produces additional MCParticle objects, as simulated interactions
 of particles with the detector material will produce additional particles.  The data product
 storing these additional particles is called {\tt sim::ParticleList}.  Not every produced particle
 is stored in this way -- electromagnetic showers may produce thousands of $e^+e^-$ pairs, events
@@ -242,12 +247,12 @@ may contain many thermal neutrons, and low-energy photons would require a large 
 with little contribution to physics, though for some processes for some events, one might imagine
 loosening the requirements on whether to accept additional particles for subsequent storage.
 
-The detector response simulation as part of the GEANT4 stepping
+The detector response simulation as part of the Geant4 stepping
 produces several data products which are still considered Monte Carlo
 truth-level information.  The {\tt sim::SimChannel} data product accumulates information for each
 readout channel of the TPC, listing how many electrons drifted past it for the induction wires or
 were collected on it by the collection wires.  Each of these charge deposits contains a total
-charge, a time, and an identifier of which GEANT4 track was responsible for the charge deposition.
+charge, a time, and an identifier of which Geant4 track was responsible for the charge deposition.
 This charge is simulated as described in Section~\ref{sec:ionization}.
 
 Similarly to the TPC channel response truth information data products, photon detector truth information
@@ -261,7 +266,7 @@ to wavelength-shifting materials and light collectors; the data product is usefu
 LArTPC detectors can have detector components in addition to the TPC wires and photon detectors.
 For example, a detector may have external scintillator paddles, or perhaps other technology for external veto
 counters.   A data product patterned after {\tt sim::SimChannel} is defined to store the MC information
-for these auxiliary detectors.  Its data members store the GEANT4 track ID, as well as the deposited energy, the entry and exit positions,
+for these auxiliary detectors.  Its data members store the Geant4 track ID, as well as the deposited energy, the entry and exit positions,
 and the time.
 
 The goal of the simulation is to produce simulated data that matches what is expected from the detector for
@@ -286,27 +291,26 @@ The truth particles generated in the event generator step are passed to a Geant4
 
 \subsubsection{User Action Lists}
 \label{sec:useractions}
-Geant4 includes several ``user hook'' routines to modify Geant4's
+Geant4 includes several user-hook routines to modify Geant4's
 standard processing. LArG4 makes use of Geant4's built-in hooks that
 are called at the beginning and end of each event, track, and step to
 record information related to the secondary particles created during
 the detector simulation. These hooks are organized in the class
-{\tt G4Base/UserAction}, which is part of the nutools package external to
-LArSoft. {\tt UserAction} uses a variant of the Abstract Factory design
+UserAction, which is part of the nutools package external to
+LArSoft. UserAction uses a variant of the Abstract Factory design
 pattern \cite{designpatterns} to simplify the handling of multiple
 simulation tasks, each of which might require access to Geant4's user
 hooks.
 
-The routine {\tt LArG4/ParticleListAction} implements the interface provided
-by {\tt G4Base/UserAction}. The overall purpose of the routine to record the
+The interface to G4Base/UserAction is implemented in the ParticleListAction routine 
+which records the
 information from each Geant4-generated secondary particle to create
-the {\tt simb::MCParticle} data product, and return a list of all such particles
+the MCParticle data product. It returns a list of all such particles
 created during a given event.
-
-The basic logic is relatively straight-forward: record particle
-information at the beginning of each track, provide a ``readout''
+The basic algorithm records particle
+information at the beginning of each track, and provides a readout'
 method to return the particle list at the end of each event. However,
-there a number of exceptions or enhancements to this basic algorithm:
+there a number of exceptions or enhancements:
 
 \begin{itemize}
 
@@ -320,17 +324,17 @@ there a number of exceptions or enhancements to this basic algorithm:
   end of the event to fill in the daughter fields of the MCParticle
   data product.
 
-\item Geant4 can generates secondary particles down to a very low
-  energy. This would result in a large number of {\tt simb::MCParticle} data
+\item Geant4 can generate secondary particles down to a very low
+  energy. This would result in a large number of MCParticle data
   products included in the output, with energies that are
   insignificant for reconstruction. Therefore, a threshold cut is
-  applied via a job parameter to supress the output of particles with
+  applied via a job parameter to suppress the output of particles with
   kinetic energies below a certain value; the default value for this
   cut is 10$keV$. However, it possible for a particle with kinetic
   energy that falls below the cut to generate a particle with energy
   above it; for example, an atomic nucleus may be excited and have low
   kinetic energy, then emit a decay particle with a kinetic energy
-  above that cut. This results in ``orphan'' particles, that is,
+  above that cut. This results in orphan' particles, that is,
   secondary particles in the output with no parent. 
 
 \item For a large number of reconstruction studies, there is no need
@@ -340,14 +344,13 @@ there a number of exceptions or enhancements to this basic algorithm:
   annihilation, or ionization should be included in the output; the
   default value of this parameter is to not include them. 
 
-\item The {\tt simb::MCParticle} data product includes a member, {\tt
-  simb::MCTrajectory}, that can include the complete Geant4 trajectory
-  information for a track; at each step within a particle's
+\item The MCParticle data product includes MCTrajectory that can include the complete Geant4 trajectory
+  information for a track. At each step within a particle's
   trajectory, the Lorenz four-position and four-momentum can be
   stored. This is useful for event displays and track-fitting studies,
-  but not needed for other studies such as energy
+  but is not needed for other studies such as energy
   calibration. Therefore, a job parameter controls whether or not the
-  complete trajectory is stored for every {\tt simb::MCParticle}; the
+  complete trajectory is stored for every MCParticle; the
   alternative is to store just the data for the first and last point
   of a particle's trajectory. The default value of this parameter is
   to store the trajectory.
@@ -361,7 +364,7 @@ STILL NEED DESCRIPTION OF USER STACKING ACTION
 The basic purpose of the Geant4 simulation of a LAr TPC detector is to
 model the ionization left by charged particles created by interactions
 in the detector. This information is easy to retrieve using the
-standard Geant4 method {\tt G4Step::GetTotalEnergyDeposit}. The next
+standard Geant4 method GetTotalEnergyDeposit. The next
 step in the process is to convert that ionization into electron
 clusters and drift them to the wires of the induction and collection
 planes. 
@@ -380,8 +383,8 @@ individually. There are two ways to approach this in Geant4:
 
 The second approach is taken in LArG4. This procedure permits LArG4 to
 sum the total amount of ionization energy deposited in each
-sub-volume, called a ``voxel'' in analogy with the word ``pixel,'' the
-term for a small area of a two-dimensional image. This in turns allows
+sub-volume, called a voxel in analogy with the word pixel, the
+term for a small area of a two-dimensional image. This allows
 corrections for potential saturation of the liquid argon within the
 voxel, which would be difficult to determine in the first approach.
 
@@ -394,13 +397,13 @@ to voxel processing, intended for potential overlay studies; in
 practice it is not used, and is set to 5${\mu}s$.
 
 The voxel readout geometry does not physically exist, and so it is
-implemented using Geant4's ``parallel world'' mechanism. Geant4 tracks
+implemented using Geant4's parallel world mechanism. Geant4 tracks
 particles through the regular geometry and any parallel geometries
 simultaneously, limiting steps within the volume boundaries in all of
-them. This is further refined in routine {\tt LArG4/PhysicsList},
+them. This is further refined in the PhysicsList routine,
 which specifies that only charged particles are to be tracked in the
 parallel voxel geometry (since only charged particles deposit
-ionization energy). (Note that the voxels described in in
+ionization energy). (Note that the voxels described in 
 Section~\ref{sec:fullopticalsim} are defined separately in yet another
 parallel geometry, and share no characteristics with the voxels
 described in this Section.)
@@ -409,28 +412,26 @@ In {\tt LArG4/LArVoxelReadoutGeometry}, a copy of the LAr TPC geometry
 is placed in a parallel world, then subdivided into voxels; each voxel
 is defined to be a Geant4 sensitive volume. As Geant4 tracks charged
 particles through the parallel voxel geometry, it calls the
-sensitive-detector routine {\tt LArG4/LArVoxelReadout}. The ionization
+sensitive-detector routine LArVoxelReadout. The ionization
 is then converted into electron clusters as described in
 Section~\ref{sec:ionization}.
 
-As noted in Section~\ref{sec:ionization}, each {\tt sim::SimChannel}
+As noted in Section~\ref{sec:ionization}, each SimChannel
 data product contains a link between an electron cluster and the
 Geant4 track ID of the ionizing particle that was its source. However,
 if a particle's kinetic energy falls below the user cut described in
 Section~\ref{sec:useractions}, that particle's track ID will not be in
-the group of {\tt simb::MCParticle} data products output by the
-simulation. Is therefore possible to have ``orphaned energy,'' that
+the group of MCParticle data products output by the
+simulation. Is is therefore possible to have orphaned energy, that
 is, electron clusters that cannot be associated with a particle in the
 output. 
 
-The most common reason for ``orphaned energy'' is that the {\tt
-  simb::MCParticle} was not written because it was the daughter
+The most common reason for orphaned energy is that the MCParticle
+was not written because it was the daughter
 particle of an electromagnetic shower, and the user has chosen not to
-include these particles in the LArG4 output. Therefore, {\tt
-  LArG4/LArVoxelReadout} calls a method in {\tt
-  LArG4/ParticleListAction} to query the current track ID. If the
+include these particles in the LArG4 output. Therefore, LArVoxelReadout calls a method in ParticleListAction to query the current track ID. If the
 particle is part of an e-m shower, rather than returning the current
-Geant4 track ID, {\tt LArG4/ParticleListAction} responds with the
+Geant4 track ID, ParticleListAction responds with the
 track ID of the particle that induced the e-m shower, which is the
 particle normally of interest in shower reconstruction studies.
 
@@ -439,7 +440,7 @@ Other types of detectors may be placed outside of the cryostat volume.
 For example, scintillator paddles or Cherenkov detectors could be used to learn more about an interaction happening in the cryostat.
 Scintillator paddles could be used to veto cosmic ray activity or hadronic showers coming from a neutrino beam interacting with material upstream of the detector enclosure.
 Cherenkov detectors could be used to measure the velocity of incoming particles from a test beam used for studying liquid argon TPC responses.
-A new object was created in LArSoft to allow users to store general information from detectors not related with the TPC, or "auxiliary" detectors.
+A new object was created in LArSoft to allow users to store general information from detectors not related with the TPC, or auxiliary detectors.
 
 For each G4 track passing the auxiliary detector volume, the LArSoft object AuxDetSimChannel holds its entering and exiting position, momentum, energy deposited, and LArSoft track identification number.
 That information is saved for each auxiliary detector in the output root file.
@@ -466,12 +467,12 @@ drift directions, nor any explicit support for analyzing events
 in the presence of a non-zero magnetic field.\footnote{Both of these features are planned.}
 
 \subsection{Optical Simulation}
-Optical physics simulations in LArSoft can take one of two forms: full or fast simulation.  Both optical simulations are implemented within LArSoft's GEANT4 based simulation package and make use of its configurable physics list functionality.  This functionality allows LArSoft simulations to define a custom GEANT4 physics list from a set of physics constructors at runtime, and is used to select between full optical, fast optical or no optical simulation. 
+Optical physics simulations in LArSoft can take one of two forms: full or fast simulation.  Both optical simulations are implemented within LArSoft's Geant4 based simulation package and make use of its configurable physics list functionality.  This functionality allows LArSoft simulations to define a custom Geant4 physics list from a set of physics constructors at runtime, and is used to select between full optical, fast optical or no optical simulation. 
 
 \subsubsection{Full Optical Simulation}
-The full simulation involves stepping individual photons through the detector volume.  Each stepping photon is treated as an individual particle in GEANT4.  The number of photons stepped is usually reduced by a constant factor representing the optical detector collection efficiency at 128 nm, thereby scaling the photon count at production rather than detection to reduce computation time and memory usage. 
+The full simulation involves stepping individual photons through the detector volume.  Each stepping photon is treated as an individual particle in Geant4.  The number of photons stepped is usually reduced by a constant factor representing the optical detector collection efficiency at 128 nm, thereby scaling the photon count at production rather than detection to reduce computation time and memory usage. 
 
-The physics constructor for full optical physics in LArSoft has been adapted from the standard GEANT4 optical physics constructor. Default implementations for scintillation and Cerenkov production, Rayleigh scattering, and absorption at boundaries and in the bulk are included. The default implementation of wavelength shifting physics processes is also included, although at present most LArSoft experiments incorporate this into the estimate of the optical detector collection efficiency rather than simulating it at the photon-by-photon level.  A customized, faster reflectivity model is implemented, whereby material boundaries have specified diffuse and specular reflectances for each material boundary type.  
+The physics constructor for full optical physics in LArSoft has been adapted from the standard Geant4 optical physics constructor. Default implementations for scintillation and Cerenkov production, Rayleigh scattering, and absorption at boundaries and in the bulk are included. The default implementation of wavelength shifting physics processes is also included, although at present most LArSoft experiments incorporate this into the estimate of the optical detector collection efficiency rather than simulating it at the photon-by-photon level.  A customized, faster reflectivity model is implemented, whereby material boundaries have specified diffuse and specular reflectances for each material boundary type.  
 
 The liquid argon volume's optical characteristics are loaded into LArSoft by a dedicated service, and are globally accessible within the LArSoft framework.  Reconstruction and simulation algorithms can access important optical properties.
 
@@ -496,13 +497,13 @@ For a given surface, any angularly dependent transmission spectrum can be incorp
 Photons are counted at detector volumes whose name matches a string supplied to the LArSoft geometry service.  This volume may represent a photomultiplier tube, or another element defined as optically sensitive, for example, a wavelength shifting surface. At geometry construction time, the volumes matching the appropriate name string in the Geometry Description Markup Languag (GDML) file are assigned optical detector IDs and become sensitive within the LArSoft simulation.
 
 Three parallel world geometries are used in LArSoft as shown in figure \ref{fig:parallelgeom}.
-The sensitive elements are placed in a separate GEANT4 parallel world geometry.  Only photons are tracked in this geometry, ensuring the optical  detection process is triggered only for optical photons.  Photon step size is not limited by the TPC voxel size, which provides a significant performance improvement. Upon photon detection, tracking of the photon is stopped. Information about the photon's arrival time and detection location are stored in a detected photon table.  At the end of the run, this table is queried to generate simulated photon data products to store in the event.  The same table is filled by the fast simulation method, and hybrid fast and full simulations can be run.  One use case for such a hybrid simulation would be the fast simulation of scintillation photons. Full simulation is required for Cerenkov photons, which have a directionality and so cannot be consistently treated by the fast simulation.
+The sensitive elements are placed in a separate Geant4 parallel world geometry.  Only photons are tracked in this geometry, ensuring the optical  detection process is triggered only for optical photons.  Photon step size is not limited by the TPC voxel size, which provides a significant performance improvement. Upon photon detection, tracking of the photon is stopped. Information about the photon's arrival time and detection location are stored in a detected photon table.  At the end of the run, this table is queried to generate simulated photon data products to store in the event.  The same table is filled by the fast simulation method, and hybrid fast and full simulations can be run.  One use case for such a hybrid simulation would be the fast simulation of scintillation photons. Full simulation is required for Cerenkov photons, which have a directionality and so cannot be consistently treated by the fast simulation.
 
 
 \begin{figure}[h]
 \centering
 \caption{A cartoon which illustrates the three parallel simulation geometries used in the LArSoft
-GEANT4 implementation.}
+Geant4 implementation.}
 \includegraphics[width=6.0in]{./mtrls/imgs/ParallelGeomScheme.pdf}
 \label{fig:parallelgeom}
 \end{figure}
@@ -515,7 +516,7 @@ The liquid argon volume of the detector is coarse-grained into optical voxels, t
 
 A dedicated run of the full optical simulation can be made to create a lookup table which contains the visibility of each voxel to each optical detector.  This run creates a specified number of isotropic 128 nm photons, uniformly distributed across each voxel volume at time t=0.  These photons propagate and are detected using the same mechanics as the full photon simulation.  After photon propagation, the number of detected photons at each optical detector is used to build the optical visibility lookup table.  This process is automated by a dedicated photon visibility service, which communicates with the event generation, simulation and analysis parts of the simulation chain to ensure they are correctly configured.
 
-Once the visibility table has been generated, the probability that a given 128 nm photon will reach a specified optical detector can be quickly assessed using the photon visibility service which is available to both simulation and reconstruction modules.  The LArSoft GEANT4 simulation can be configured to include the fast optical physics constructor which implements the lookup-based fast scintillation process within simulations. The generation parameters for scintillation light in the fast scintillation process are equivalent to those used in the full simulation.  However, instead of placing optical photons onto the GEANT4 particle stack, detected optical photons are inserted directly into the detected photon table probabilistically, based on the visibility of the detector location where the scintillation occurred.  The arrival times of the photons are also smeared based on the distribution of production times.  The sum of detected photons from each voxel where scintillation emission occured gives the total optical detector response.
+Once the visibility table has been generated, the probability that a given 128 nm photon will reach a specified optical detector can be quickly assessed using the photon visibility service which is available to both simulation and reconstruction modules.  The LArSoft Geant4 simulation can be configured to include the fast optical physics constructor which implements the lookup-based fast scintillation process within simulations. The generation parameters for scintillation light in the fast scintillation process are equivalent to those used in the full simulation.  However, instead of placing optical photons onto the Geant4 particle stack, detected optical photons are inserted directly into the detected photon table probabilistically, based on the visibility of the detector location where the scintillation occurred.  The arrival times of the photons are also smeared based on the distribution of production times.  The sum of detected photons from each voxel where scintillation emission occured gives the total optical detector response.
 
 The photon library is both geometry and voxelization scheme specific, and changes to either require a full regeneration, which is a computationally intensive job.  The effects of Rayleigh scattering and absorption are also built into the visibility table.  Changes to the argon scintillation production properties and optical detector efficiencies can be made without regenerating the table.
 
@@ -599,7 +600,7 @@ After lines have been identified in the collection of hits, a set of line mergin
 \subsection{Event Visualization}
 An important part of the LArSoft suite is the ability to visually display events. The basic event display is constructed based on ROOT GUI libraries \cite{ROOT}.
 It can be used to display both data and MC events at any stage of their reconstruction, the latter with the corresponding MC truth information. 
-Navigation between events is either by inserting the desired run and event number in the corresponding fields or by means of the ``next`` and "previous'' buttons.
+Navigation between events is either by inserting the desired run and event number in the corresponding fields or by means of the next and previous buttons.
 
 The basic event display window, Fig. \ref{argo.evd} shows projections in wire-time space for each of the views present in the given detector, where the quantity of charge in ADC collected in each wire is denoted by a color scale or intensity of gray-scale. The ADC theshold of what is displayed is a settable parameter. 
 The user has the option of overlaying an MC event with the MC truth tracks color coded by particle type. The main display window is completed by a wire viewer, which shows the time series of a selected single wire in any of the views - the displayed wire can be chosen via mouse click or a field entry window.
@@ -656,7 +657,7 @@ LArSoft has set up a Continuous Integration system based on Jenkins\cite{jenkins
 
 A rough estimate of resource usage can be obtained by running standard ART services called TimeService and SimpleMemoryCheck. TimeService gives an estimate of the time used by the module to perform its task. SimpleMemoryCheck monitors the usage of memory (RAM) by the whole program. In order for jobs to run smoothly in a GRID or remote environment, the job should use less than 2 Gigabyte of memory, and less than 48 hours of CPU time.
 
-A resource coordinator in LArSoft cheeks for excessive usage, and if found, analysis is done using tools like Valgrind\cite{valgrind}, Gperftools\cite{gperf}, and Allinea.\cite {allinea}.
+A resource coordinator in LArSoft checks for excessive usage, and if found, analysis is done using tools like Valgrind\cite{valgrind}, Gperftools\cite{gperf}, and Allinea.\cite {allinea}.
 The code author is notified by the resource coordinator of the issue and together they develop a solution to the resource problem. Most typical problems relate to the use of data structures, and can be solved by following the ART guidelines.\cite{art-guide}
  
 \section{Summary}
