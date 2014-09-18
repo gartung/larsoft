@@ -78,7 +78,7 @@
 \address{Fermi National Accelerator Lab, Batavia, IL, USA, 60510-5011}
 \ead{brebel@fnal.gov}
 \author{William Seligman}
-\address{}
+\address{Columbia University Nevis Laboratories, PO Box 137, Irvington, NY, USA, 10533}
 \ead{seligman@nevis.columbia.edu}
 \author{Erica Snider}
 \address{Fermi National Accelerator Lab, Batavia, IL, USA, 60510-5011}
@@ -150,12 +150,19 @@ ART provides many of the services necessary to operate in a production environme
 \subsubsection{Event Generation}
 LArSoft makes use of the NuSoft packages that provide a common interface to event generators, GEANT4 and event display libraries developed for use by all neutrino experiments. The packages used include:    EventDisplayBase, EventGeneratorBase, G4Base, MagneticField, NuReweight and SimulationBase.
 
-There are four different ways to create events for LArSoft:
+There are several different ways to create events for LArSoft:
 \begin{enumerate}
 \item{CRY - a third-party package to simulate cosmic rays documented at \cite{cry}}
-\item{GENIE - external neutrino interaction generator used to produce neutrinos in the Monte Carlo simulation}
+\item{External neutrino interaction generators used to produce neutrinos in the Monte Carlo simulation. There are several generators which can supply input to LArSoft:}
+\begin{enumerate}
+\item{GENIE\cite{genie} - the standard neutrino event generator in LArSoft}
+\item{NuWro\cite{nuwro} - a neutrino event generator with potentially improved spectral functions for liquid argon}
+\item{GIBUU\cite{gibuu} - a theory-code framework that was mainly developed for different classes of reactions other than neutrinos}
+\item{NUANCE\cite{nuance} - an older neutrino event generator used in MiniBooNE; it is available to compare the results of MiniBooNE and MicroBooNE simulations}
+\end{enumerate}
 \item{Single - creation of single participle spill or multiple particles with the initial position, momenta, and the spread of momenta and starting positions specified in the job file.}
 \item{LightSource - simulation of placing an extended, isotropic light source within the TPC volume to generate a stream of photons.}
+\item{TextFileGen - accepts a text file of HepMC\cite{hepmc} event records.}
 \end{enumerate}
 
 \subsubsection{Detector Simulation}
@@ -275,12 +282,158 @@ incremental updates can be accommodated in a backward-compatible fashion using {
 data product schema evolution features.
 
 \subsection{Adaptations for Using G4}
-- LArSoft specific adaptations for using G4 (the user action lists and readout geometries)
-The truth particles generated in the event generator step are passed to a GEANT4 based detector simulation called LArG4.  The geometry GDML file is parsed to create a GEANT4 detector description using the built-in GDML parser, which interfaces to LArSoft via the DetectorConstruction LArSoft class.
+The truth particles generated in the event generator step are passed to a Geant4 based detector simulation called LArG4.  The geometry GDML file is parsed to create a Geant4 detector description using the built-in GDML parser, which interfaces to LArSoft via the DetectorConstruction LArSoft class.
+
 \subsubsection{User Action Lists}
-NEED WORDS.
+\label{sec:useractions}
+Geant4 includes several ``user hook'' routines to modify Geant4's
+standard processing. LArG4 makes use of Geant4's built-in hooks that
+are called at the beginning and end of each event, track, and step to
+record information related to the secondary particles created during
+the detector simulation. These hooks are organized in the class
+{\tt G4Base/UserAction}, which is part of the nutools package external to
+LArSoft. {\tt UserAction} uses a variant of the Abstract Factory design
+pattern \cite{designpatterns} to simplify the handling of multiple
+simulation tasks, each of which might require access to Geant4's user
+hooks.
+
+The routine {\tt LArG4/ParticleListAction} implements the interface provided
+by {\tt G4Base/UserAction}. The overall purpose of the routine to record the
+information from each Geant4-generated secondary particle to create
+the {\tt simb::MCParticle} data product, and return a list of all such particles
+created during a given event.
+
+The basic logic is relatively straight-forward: record particle
+information at the beginning of each track, provide a ``readout''
+method to return the particle list at the end of each event. However,
+there a number of exceptions or enhancements to this basic algorithm:
+
+\begin{itemize}
+
+\item Geant4 assigns a unique ID number to every particle it tracks
+  during an event: the track ID. At the start of a particle track,
+  Geant4 provides a method call to determine the track ID of the
+  parent particle for a given track, but there is no predefined method
+  for determining the track IDs of any daughter particles produced by
+  Geant4 as it models the propagation of the track through the
+  detector. Therefore, the list of particles must be scanned at the
+  end of the event to fill in the daughter fields of the MCParticle
+  data product.
+
+\item Geant4 can generates secondary particles down to a very low
+  energy. This would result in a large number of {\tt simb::MCParticle} data
+  products included in the output, with energies that are
+  insignificant for reconstruction. Therefore, a threshold cut is
+  applied via a job parameter to supress the output of particles with
+  kinetic energies below a certain value; the default value for this
+  cut is 10$keV$. However, it possible for a particle with kinetic
+  energy that falls below the cut to generate a particle with energy
+  above it; for example, an atomic nucleus may be excited and have low
+  kinetic energy, then emit a decay particle with a kinetic energy
+  above that cut. This results in ``orphan'' particles, that is,
+  secondary particles in the output with no parent. 
+
+\item For a large number of reconstruction studies, there is no need
+  to store the daughter particles of electromagnetic showers. A job
+  parameter controls whether particles produced in pair production,
+  compton scattering, photoelectric effect, bremstrahlung,
+  annihilation, or ionization should be included in the output; the
+  default value of this parameter is to not include them. 
+
+\item The {\tt simb::MCParticle} data product includes a member, {\tt
+  simb::MCTrajectory}, that can include the complete Geant4 trajectory
+  information for a track; at each step within a particle's
+  trajectory, the Lorenz four-position and four-momentum can be
+  stored. This is useful for event displays and track-fitting studies,
+  but not needed for other studies such as energy
+  calibration. Therefore, a job parameter controls whether or not the
+  complete trajectory is stored for every {\tt simb::MCParticle}; the
+  alternative is to store just the data for the first and last point
+  of a particle's trajectory. The default value of this parameter is
+  to store the trajectory.
+
+\end{itemize}
+
+STILL NEED DESCRIPTION OF USER STACKING ACTION
+
 \subsubsection{Readout Geometries}
-NEED WORDS
+
+The basic purpose of the Geant4 simulation of a LAr TPC detector is to
+model the ionization left by charged particles created by interactions
+in the detector. This information is easy to retrieve using the
+standard Geant4 method {\tt G4Step::GetTotalEnergyDeposit}. The next
+step in the process is to convert that ionization into electron
+clusters and drift them to the wires of the induction and collection
+planes. 
+
+The ionization deposited by a charged particle is not necessarily
+constant along the entire length of a charged-particle track. To
+accurately convert the ionization to electron clusters as described in
+Section~\ref{sec:ionization}, it is necessary to divide the track into
+short segments and apply the ionization procedure to each segment
+individually. There are two ways to approach this in Geant4:
+
+\begin{itemize}
+\item Set the Geant4 step size to a small value for charge-particle tracks in the LAr TPC.
+\item Divide the LAr TPC into smaller sub-volumes, which will force Geant4 to limit the step size to the boundaries of these volumes.
+\end{itemize}
+
+The second approach is taken in LArG4. This procedure permits LArG4 to
+sum the total amount of ionization energy deposited in each
+sub-volume, called a ``voxel'' in analogy with the word ``pixel,'' the
+term for a small area of a two-dimensional image. This in turns allows
+corrections for potential saturation of the liquid argon within the
+voxel, which would be difficult to determine in the first approach.
+
+The ${\Delta}x$, ${\Delta}y$, and ${\Delta}z$ dimensions of the voxels
+are given by user parameters. By default, they are 1/10th the spacing
+between the wires of the induction and collection planes in
+MicroBooNE; the wire spacing is 3$mm$, hence the default voxel size is
+$0.3mm\times0.3mm\times0.3mm$. There is also a ${\Delta}t$-component
+to voxel processing, intended for potential overlay studies; in
+practice it is not used, and is set to 5${\mu}s$.
+
+The voxel readout geometry does not physically exist, and so it is
+implemented using Geant4's ``parallel world'' mechanism. Geant4 tracks
+particles through the regular geometry and any parallel geometries
+simultaneously, limiting steps within the volume boundaries in all of
+them. This is further refined in routine {\tt LArG4/PhysicsList},
+which specifies that only charged particles are to be tracked in the
+parallel voxel geometry (since only charged particles deposit
+ionization energy). (Note that the voxels described in in
+Section~\ref{sec:fullopticalsim} are defined separately in yet another
+parallel geometry, and share no characteristics with the voxels
+described in this Section.)
+
+In {\tt LArG4/LArVoxelReadoutGeometry}, a copy of the LAr TPC geometry
+is placed in a parallel world, then subdivided into voxels; each voxel
+is defined to be a Geant4 sensitive volume. As Geant4 tracks charged
+particles through the parallel voxel geometry, it calls the
+sensitive-detector routine {\tt LArG4/LArVoxelReadout}. The ionization
+is then converted into electron clusters as described in
+Section~\ref{sec:ionization}.
+
+As noted in Section~\ref{sec:ionization}, each {\tt sim::SimChannel}
+data product contains a link between an electron cluster and the
+Geant4 track ID of the ionizing particle that was its source. However,
+if a particle's kinetic energy falls below the user cut described in
+Section~\ref{sec:useractions}, that particle's track ID will not be in
+the group of {\tt simb::MCParticle} data products output by the
+simulation. Is therefore possible to have ``orphaned energy,'' that
+is, electron clusters that cannot be associated with a particle in the
+output. 
+
+The most common reason for ``orphaned energy'' is that the {\tt
+  simb::MCParticle} was not written because it was the daughter
+particle of an electromagnetic shower, and the user has chosen not to
+include these particles in the LArG4 output. Therefore, {\tt
+  LArG4/LArVoxelReadout} calls a method in {\tt
+  LArG4/ParticleListAction} to query the current track ID. If the
+particle is part of an e-m shower, rather than returning the current
+Geant4 track ID, {\tt LArG4/ParticleListAction} responds with the
+track ID of the particle that induced the e-m shower, which is the
+particle normally of interest in shower reconstruction studies.
+
 \subsection{Adding Additional Detectors}
 Other types of detectors may be placed outside of the cryostat volume.
 For example, scintillator paddles or Cherenkov detectors could be used to learn more about an interaction happening in the cryostat.
@@ -299,6 +452,7 @@ While G4 steps through to the next time slice, each particle's exit position and
 After the G4 steps are exhausted for this detector, the AuxDetSimChannel object has collected all of the simulation data needed for further analysis.
 
 \subsection{New Parameterizations for Ionization}
+\label{sec:ionization}
 - description of how new parameterizations for ionization, etc can be added into the simulation including a description of the mechanism for calculating the amount of ionization charge and scintillation light.  It could include a statement of the available options for that calculation (NEST vs decoupled charge and light) and how a user might add a new method.
 NEED WORDS
 
@@ -324,6 +478,9 @@ The liquid argon volume's optical characteristics are loaded into LArSoft by a d
 Scintillation production is configured with a photon momentum spectrum centered at 9.7 eV and a shape which is taken from \cite{spectrum}.  Singlet and triplet scintillation components are included, with time constants of 6 and 1500 ns, although tensions within the literature suggests these values will require finer tuning.\cite{fastslow} Data from LArSoft experiments will be used to adjust these values.  The scintillation yield is defined per incident particle type using an extension of the relationship shown in \cite{scintyield}, and the absolute yield for a minimum ionizing particle is set to 24,000 photons per MeV, assuming a constant electric field strength of 500 V/cm. 
 
 Cerenkov photons are produced with yields and energies corresponding to the standard Frank-Tamm spectrum of Cerenkov radiation, given a continuous parameterization of the liquid argon refractive index derived from the references in \cite{RIndex}. Rayleigh scattering and photon-absorption process are enabled, where the scattering length is specified over the range of photon energies from 1.8 eV to 10.8 eV, and is 90 cm at the peak of the argon scintillation spectrum \cite{Rlength}.  The bulk absorption length is set to 2000 m (approximately infinite). Further work to parameterize purity dependent absorption effects may be required, with absorption due to dissolved nitrogen being the most likely additional effect\cite{nitrogen}.
+
+\label{sec:fullopticalsim}
+The full simulation involves stepping every optical photon individually through the detector volume.  Typical photon yields for an event cause this to be a computationally intensive procedure. The physics constructor has been specially adapted for LArSoft and includes scintillation and Cerenkov production, Rayleigh scattering, reflections at boundaries, absorption at boundaries and in the bulk, and wavelength shifting physics processes.  The configurations of these are described below.
 
 A simplified reflectivity model is used, whereby each type of boundary in the detector is supplied with a wavelength-dependent total reflectivity and specular/diffuse reflection fraction.   For  preliminary  studies,  only the  steel/argon boundaries  at  the  edge of the cryostat are  reflective. All  other  surfaces,  including  wires,  field cage,  etc,  are opaque.  The steel/argon boundaries have a total reflectance of 25\%, of which 50\% is specular\cite{reflectances}.
 
@@ -521,6 +678,12 @@ NEED WORDS.
 \bibitem{reflectances} M Antonello et al.  "Analysis of Liquid Argon Scintillation Light Signals with the ICARUS T600 Detector", Unpublished.
 \bibitem{ester} Ester, M., Kriegel, H.-P., Sander, J., and Xu, X. 1996. "A density-based algorithm for discovering clusters in large spatial databases with noise," Proc. 2nd Int. Conf.
 \bibitem{ROOT} http://root.cern.ch/drupal/
+\bibitem{genie} C.Andreopoulos et al., The GENIE Neutrino Monte Carlo Generator, Nucl.Instrum.Meth.A614:87-104,2010.
+\bibitem{nuwro} Tomasz Golan, Cezary Juszczak, Jan T. Sobczyk. ``Final State Interactions Effects in Neutrino-Nucleus Interaction,'' Phys.Rev. C86 (2012) 015505.
+\bibitem{gibuu} O. Buss, T. Gaitanos, K. Gallmeister, H. van Hees, M. Kaskulov, O. Lalakulich, A.B. Larionov, T. Leitner, J. Weil, U. Mosel (Giessen U.). Jun 2011. ``Transport-theoretical Description of Nuclear Reactions,'' Phys.Rept. 512 (2012) 1-124. http://gibuu.hepforge.org
+\bibitem{nuance} D. Casper, Nucl.Phys.Proc.Suppl. 112 (2002) 161-170
+\bibitem{hepmc} Matt Dobbs (Victoria U.) , Jorgen Beck Hansen (CERN). ``The HepMC C++ Monte Carlo event record for High Energy Physics,'' Comput.Phys.Commun. 134 (2001) 41-46.
+\bibitem{designpatterns} Gemma et al., ``Design Patterns,'' Addison-Wesley Longman, Inc., 1995. 
 \bibitem{gian} Petrillo, Gianluca, 2014. "LArSoft: simulation and reconstruction for Liquid Argon TPC," Liquid Argon TPC R\&D Workshop, Fermilab.
 \bibitem{git-flow} http://nvie.com/posts/a-successful-git-branching-model/
 \bibitem{git-control} https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/\_The\_developer\_environment\_
@@ -539,10 +702,3 @@ NEED WORDS.
 \clearpage 
 
 \end{document}
-
-
-
-
-
-
-
