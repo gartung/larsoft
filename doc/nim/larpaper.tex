@@ -116,7 +116,8 @@ A common software package for the simulation, reconstruction, and analysis of Li
 %%%
 %%%\clearpage
 \maketitle
-
+\hyphenation{Particle-List-Action}
+\hyphenation{created responses assumed respon-sible language}
 \section{Introduction}
 \subsection{What is LArSoft}
 LArSoft is a software package for the simulation, reconstruction, and analysis of all planned and running liquid argon experiments at Fermilab. Any Liquid Argon Time Projection Chamber (LArTPC) experiment can make use of LArSoft algorithms as long as the experiment supplies a properly formatted description of its detector geometry and electronics. 
@@ -143,7 +144,6 @@ LArSoft is the product of the collaboration between the following experiments an
 %\caption{\subfloat[]{\includegraphics[width=3.0in]{picture of liquid argon}}%
 \label{bubble}
 \end{figure}
-
 
 \section{Framework and Tools}
 \subsection{ART}
@@ -193,100 +193,78 @@ The TPC volume contains many TPCPlaneXXX volumes that describe the wire planes. 
 
 \subsection{Data Product Description}
 
-LArSoft simulation jobs use the {\it art} framework tools to manage
-job configuration, module scheduling and execution, error handling, and input/output.
-The modules in a LArSoft simulation job perform the steps required for simulation. 
-They communicate data from one job to the next via the event record in memory. 
-The structure of the data within the event record is given by predefined data products,
-which are implemented as objects with C++ class definitions. 
-If the data products required by downstream modules are saved in the output file of the
-upstream jobs, the steps required by simulation can be performed in separate jobs.
+LArSoft simulation jobs use the ART framework tools to manage job configuration, module scheduling and execution, error handling, and input/output. LArSoft simulation job modules perform the steps required for simulation. They communicate data from one job to the next via the event record in memory. The structure of the data within the event record is given by predefined data products, which are implemented as objects with C++ class definitions. If the data products required by downstream modules are saved in the output file of the upstream jobs, the steps required by simulation can be performed in separate jobs.
 
-The {\it art} framework provides a significant number of data products that are
-generally useful for all experiments.  These include an event header, run summaries,
-storage of job configuration parameters within the job output, and a history of what
-modules have produced what other data products within the {\it art}-formatted data file.
-This section describes LArSoft-specific data products.
+LArSoft-specific data products include:
+\begin{itemize}
 
-The first data product that encodes physics information is {\tt simb::MCParticle}.  A {\tt simb::MCParticle}
-object stores, per particle, a counter to index which particle it is,
-the PDG-recommended particle ID code\cite{pdgcode}, the counter number of its parent particle,
-its mass, the position and time of its starting point (or of the first point to be simulated
-for a particle entering from outside the active volume), and its momentum and energy.
-A status code is included to indicate which particles are to be simulated and which
-are stored by the generator for purposes in extracting history and parentage (as is the
+\item{the MCParticle which stores, per particle, a unique integer to index the particle in the list,}
+\item{the PDG-recommended particle ID code\cite{pdgcode}, }
+\item{the counter number of its parent particle,}
+\item{its mass,}
+\item{the position and time of its starting point or of the first point to be simulated
+for a particle entering from outside the active volume, and}
+\item{its momentum and energy.}
+\end{itemize}
+A status code indicates which particles are to be simulated and which
+are stored by the generator for purposes in extracting history and parentage as is the
 case of $\pi^0\rightarrow\gamma\gamma$ decays, or particles that are absorbed within
 nuclei.
 
-The {\tt simb::MCNeutrino} data product contains a pointer to the {\tt simb::MCParticle} object for
+The MCNeutrino data product contains a pointer to the MCParticle object for
 the incoming neutrino, the outgoing lepton, and an interaction-type descriptor,
 which indicates whether the event was a charged-current or a neutral-current interaction,
 whether the struck nucleon was a proton or a neutron, what the recoiling system's mass is,
 the Bjorken $x$ value, and the inelasticity quantity $y=E_\ell/E_\nu$.
 
-The {\tt simb::MCTruth} data product is a container for the {\tt simb::MCParticle} and {\tt simb::MCneutrino}
-data products.  Some generators do not produce {\tt simb::MCNeutrino} objects, so {\tt simb::MCTruth}
-contains data members to indicate if the {\tt simb::MCNeutrino} information is filled and to indicate
-the origins of particles.
+The MCTruth data product is a container for the MCParticle and MCNeutrino
+data products.  Some generators do not produce MCNeutrino objects, so MCTruth contains data members to indicate if the MCNeutrino information is filled in and to indicate the origins of particles.
  
-The {\tt simb::MCFlux} data product stores information from the neutrino beam simulations.
-It has data members that mirror the {\tt gnumi} ntuples, which provide information that
-is needed to reweight the flux from one model to another.
+The MCFlux data product stores information from the neutrino beam simulations. It has data members that mirror the G4NuMI ntuples, which provide information to reweight the flux from one model to another.
 
-The data products above are used as input to the LArG4 simulation step, described below.
-They are also indispensable in interpreting the events for later analysis, as MC
-samples typically contain mixtures of many different processes and energies, and
-in order to determine what the energy resolution is for a specific kind of process
-or type of reconstructed event, it is important to know what the true values were.
+These data products are used as input to the LArG4 simulation step, described below. They are also indispensable in interpreting the events for later analysis, as MC samples typically contain mixtures of many different processes and energies. To determine the energy resolution for a specific kind of process or type of reconstructed event, it is important to know what the true values were.
 
 The Geant4 physics simulation produces additional MCParticle objects, as simulated interactions
-of particles with the detector material will produce additional particles.  The data product
-storing these additional particles is called {\tt sim::ParticleList}.  Not every produced particle
-is stored in this way -- electromagnetic showers may produce thousands of $e^+e^-$ pairs, events
-may contain many thermal neutrons, and low-energy photons would require a large amount of storage
-with little contribution to physics, though for some processes for some events, one might imagine
-loosening the requirements on whether to accept additional particles for subsequent storage.
+of particles with the detector material will produce additional particles.  These are stored in ParticleList.  Not every produced particle is stored in this way. Storing all 
+particles in electromagnetic showers would require a large amount of storage with little contribution to physics. 
+But storing the first few steps of an electromagnetic shower
+is needed to characterize algorithms that separate showers initiated by electrons from those initiated by photons. So there are times when it is appropriate to loosen
+the requirements on whether to accept additional particles for subsequent storage.
 
-The detector response simulation as part of the Geant4 stepping
-produces several data products which are still considered Monte Carlo
-truth-level information.  The {\tt sim::SimChannel} data product accumulates information for each
-readout channel of the TPC, listing how many electrons drifted past it for the induction wires or
-were collected on it by the collection wires.  Each of these charge deposits contains a total
-charge, a time, and an identifier of which Geant4 track was responsible for the charge deposition.
-This charge is simulated as described in Section~\ref{sec:ionization}.
+The detector response simulation data products are considered Monte Carlo truth-level information. The SimChannel data product accumulates information for each readout channel of the TPC, listing how many electrons drifted past it for the induction wires or were collected. Each of these charge deposits contains a total charge, a time, and an identifier of which Geant4 track was responsible for the charge deposition. This charge is simulated as described in 
+Section~\ref{sec:ionization}.
 
 Similarly to the TPC channel response truth information data products, photon detector truth information
-is stored in the event record.  The {\tt sim::SimPhotons} data product stores information for each photon
+is stored in the event record.  The SimPhotons data product stores information for each photon
 that enters a sensitive OpDet volume.  It contains data members that specify the initial position of the
 photon, as well as the time and the energy.    
-This data product can be used flexibly no matter what the photon detection technology is.  Some detectors
-may have PMT's with wavelength shifting material covering them, while other detectors can have SiPM's attached
-to wavelength-shifting materials and light collectors; the data product is useful for both.
+This data product can be used with different photon detection technologies, such as detectors with wavelength shifting material covering the PMTs, and detectors with SiPMs attached to wavelength-shifting materials and light collectors.
 
 LArTPC detectors can have detector components in addition to the TPC wires and photon detectors.
-For example, a detector may have external scintillator paddles, or perhaps other technology for external veto
-counters.   A data product patterned after {\tt sim::SimChannel} is defined to store the MC information
-for these auxiliary detectors.  Its data members store the Geant4 track ID, as well as the deposited energy, the entry and exit positions,
-and the time.
+For example, a detector may have external scintillator paddles, or other technology for external veto
+counters.   A data product patterned after SimChannel is defined to store the MC information
+for these auxiliary detectors.  Its data members store the Geant4 track ID, as well as the deposited energy, the entry and exit positions, and the time.
 
 The goal of the simulation is to produce simulated data that matches what is expected from the detector for
 the different input physics processes, along with detector resolution and noise effects.  These simulation
-steps are described in Section~\ref{sec:detsim}.  The output of this simulation is a vector of ADC counts,
+steps are described in Sections~\ref{sec:adapt} and~\ref{sec:ionization}. The output of this simulation is a vector of ADC counts,
 one per sample time (typically 500 ns), for each readout channel in the detector.  Additional data members
 store the pedestal and specify the compression algorithm type and version, such as Huffman coding or zero 
-suppression.   These data are stored in a data product called {\tt raw::RawDigit}.
+suppression. These are stored in a data product called RawDigit.
 
-A similar structure is provided by {\tt optdata::OpticalRawDigit} for the optical detectors, which read out
+A similar structure is provided by OpticalRawDigit for the optical detectors, which read out
 digitized waveforms with a much faster sampling rate, and in
-{\tt raw::AuxDetDigit} for the auxiliary detectors.  A data product storing optical raw data only for 
-subsets of the samples which contain identified pulses is {\tt raw::OpDetPulse}.
+AuxDetDigit for the auxiliary detectors.  OpDetPulse stores optical raw data only for 
+subsets of the samples which contain identified pulses.
 
 These data products are subject to modification as the requirements of the detector simulation evolve.
 Large redesigns of a data product require new data product definitions, while
-incremental updates can be accommodated in a backward-compatible fashion using {\it art}'s 
+incremental updates can be accommodated in a backward-compatible fashion using ART's
 data product schema evolution features.
 
-\subsection{Adaptations for Using G4}
+\subsection{Adaptations for Using Geant4}
+\label{sec:adapt}
+
 The truth particles generated in the event generator step are passed to a Geant4 based detector simulation called LArG4.  The geometry GDML file is parsed to create a Geant4 detector description using the built-in GDML parser, which interfaces to LArSoft via the DetectorConstruction LArSoft class.
 
 \subsubsection{User Action Lists}
@@ -308,7 +286,7 @@ information from each Geant4-generated secondary particle to create
 the MCParticle data product. It returns a list of all such particles
 created during a given event.
 The basic algorithm records particle
-information at the beginning of each track, and provides a readout'
+information at the beginning of each track, and provides a readout
 method to return the particle list at the end of each event. However,
 there a number of exceptions or enhancements:
 
@@ -330,18 +308,18 @@ there a number of exceptions or enhancements:
   insignificant for reconstruction. Therefore, a threshold cut is
   applied via a job parameter to suppress the output of particles with
   kinetic energies below a certain value; the default value for this
-  cut is 10$keV$. However, it possible for a particle with kinetic
+  cut is 10$keV$. It is possible for a particle with kinetic
   energy that falls below the cut to generate a particle with energy
   above it; for example, an atomic nucleus may be excited and have low
   kinetic energy, then emit a decay particle with a kinetic energy
-  above that cut. This results in orphan' particles, that is,
+  above that cut. This results in orphan particles, that is,
   secondary particles in the output with no parent. 
 
 \item For a large number of reconstruction studies, there is no need
   to store the daughter particles of electromagnetic showers. A job
   parameter controls whether particles produced in pair production,
   compton scattering, photoelectric effect, bremstrahlung,
-  annihilation, or ionization should be included in the output; the
+  annihilation, or ionization should be included in the output. The
   default value of this parameter is to not include them. 
 
 \item The MCParticle data product includes MCTrajectory that can include the complete Geant4 trajectory
@@ -360,6 +338,7 @@ there a number of exceptions or enhancements:
 STILL NEED DESCRIPTION OF USER STACKING ACTION
 
 \subsubsection{Readout Geometries}
+\label{sec:detsim}
 
 The basic purpose of the Geant4 simulation of a LAr TPC detector is to
 model the ionization left by charged particles created by interactions
@@ -416,13 +395,13 @@ sensitive-detector routine LArVoxelReadout. The ionization
 is then converted into electron clusters as described in
 Section~\ref{sec:ionization}.
 
-As noted in Section~\ref{sec:ionization}, each SimChannel
+Each SimChannel
 data product contains a link between an electron cluster and the
 Geant4 track ID of the ionizing particle that was its source. However,
 if a particle's kinetic energy falls below the user cut described in
 Section~\ref{sec:useractions}, that particle's track ID will not be in
 the group of MCParticle data products output by the
-simulation. Is is therefore possible to have orphaned energy, that
+simulation. It is therefore possible to have orphaned energy, that
 is, electron clusters that cannot be associated with a particle in the
 output. 
 
@@ -442,15 +421,15 @@ Scintillator paddles could be used to veto cosmic ray activity or hadronic showe
 Cherenkov detectors could be used to measure the velocity of incoming particles from a test beam used for studying liquid argon TPC responses.
 A new object was created in LArSoft to allow users to store general information from detectors not related with the TPC, or auxiliary detectors.
 
-For each G4 track passing the auxiliary detector volume, the LArSoft object AuxDetSimChannel holds its entering and exiting position, momentum, energy deposited, and LArSoft track identification number.
+For each Geant4 track passing the auxiliary detector volume, the LArSoft object AuxDetSimChannel holds its entering and exiting position, momentum, energy deposited, and LArSoft track identification number.
 That information is saved for each auxiliary detector in the output root file.
-This data object allows users to use the G4 track identification number to trace back the genesis of a particle crossing the detector, enabling simulation studies and efficiency studies of external auxiliary detectors.
+This data object allows the use of the Geant4 track identification number to trace back the genesis of a particle crossing the detector, enabling simulation studies and efficiency studies of external auxiliary detectors.
 
 To add new auxiliary detectors, the user needs to define the detector in the experiment's GDML file.
-LArSoft has a facility to identify those volumes to enable G4 to treat them as an active detector.
-As G4 encounters a new G4 track identification number within the active detector, the AuxDetSimChannel data object stores each entry position and entry momentum.
-While G4 steps through to the next time slice, each particle's exit position and exit momentum is updated, and the running sum of energy deposited is updated. 
-After the G4 steps are exhausted for this detector, the AuxDetSimChannel object has collected all of the simulation data needed for further analysis.
+LArSoft has a facility to identify those volumes to enable Geant4 to treat them as an active detector.
+As Geant4 encounters a new Geant4 track identification number within the active detector, the AuxDetSimChannel data object stores each entry position and entry momentum.
+While Geant4 steps through to the next time slice, each particle's exit position and exit momentum is updated, and the running sum of energy deposited is updated. 
+After the Geant4 steps are exhausted for this detector, the AuxDetSimChannel object has collected all of the simulation data needed for further analysis.
 
 \subsection{New Parameterizations for Ionization}
 \label{sec:ionization}
@@ -575,7 +554,7 @@ NEED WORDS.
 \subsection{Unique aspects of LArSoft Reconstruction}
 
 \subsection{One Example Reconstruction Chain in LArSoft}
-We describe one reconstruction chain that is being used by the MicroBoone experiment to reconstruct cosmic and neutrino interactions. A LArTPC typically saves raw data in the format of ADC counts as a function of TPC ticks for each wire. The signal can have a unipolar shape if it is on a collection wire or a bipolar shape if it is on an unshielded collection wire. The first step in the reconstruction is to convert the raw signal from each wire to a standard shape such as a Gaussian shape. This is achieved by passing the raw data through a calibrated deconvolution algorithm, which filters noise and corrects for the electronics response and the effect of the drift field response to produce the best estimates of the drift charge and time. 
+The reconstruction chain used by the MicroBoone experiment to reconstruct cosmic and neutrino interactions is described as follows. A LArTPC typically saves raw data in the format of ADC counts as a function of TPC ticks for each wire. The signal can have a unipolar shape if it is on a collection wire or a bipolar shape if it is on an unshielded collection wire. The first step in the reconstruction is to convert the raw signal from each wire to a standard shape such as a Gaussian shape. This is achieved by passing the raw data through a calibrated deconvolution algorithm, which filters noise and corrects for the electronics response and the effect of the drift field response to produce the best estimates of the drift charge and time. 
 
 [Gaussian Hit Finder - Jonathan]
 
@@ -583,9 +562,9 @@ We describe one reconstruction chain that is being used by the MicroBoone experi
 
 \subsubsection{Fuzzy Cluster}
 
-After hit finding has completed, the hits in each plane are clustered. The goal of clustering is to categorize hits into individual physics objects as best as possible in 2D. Fuzzy Cluster is such an algorithm and proceeds in five stages. The first stage implements the FLAME clustering algorithm originally developed for the analysis of DNA microarray data~\cite{flame}. The goal of the FLAME clustering algorithm is to break hits on the selected plane into smaller portions to improve memory usage of the second step, the Hough transform. The Hough transform is implemented to identify hits that from line-like objects such as tracks. The particular variant of the Hough transform implemented is the Progressive Probabilistic Hough Transform, which is optimized for speed and light memory usage~\cite{ppht}. 
+After hit finding has completed, the hits in each plane are clustered. The goal of a clustering algorithm is to categorize hits into individual physics objects as best as possible in 2D. Fuzzy Cluster is such an algorithm and proceeds in five stages. The first stage implements the FLAME clustering algorithm originally developed for the analysis of DNA microarray data\cite{flame}. The goal of the FLAME clustering algorithm is to break hits on the selected plane into smaller portions to improve memory usage of the second step, the Hough transform. The Hough transform identifies hits that form line-like objects such as tracks. The particular variant of the Hough transform implemented is the Progressive Probabilistic Hough Transform, which is optimized for speed and light memory usage\cite{ppht}. 
 
-After lines have been identified in the collection of hits, a set of line merging steps are implemented as the third step to group hits included in the identified lines into track-like and shower-like objects. In the fourth step, the hits not incorporated in lines by the Hough transform are merged into the nearest cluster formed from the identified lines. The hits are only merged with lines provided they satisfy a distance requirement. The fifth and final step runs the DBSCAN algorithm, described in~\cite{dbscan}, clustering algorithm over hits that were not incorporated into lines from the Hough transform or merged with hits already part of a line. 
+After lines have been identified in the collection of hits, a set of line merging steps are implemented as the third step to group hits included in the identified lines into track-like and shower-like objects. In the fourth step, the hits not incorporated in lines by the Hough transform are merged into the nearest cluster formed from the identified lines. The hits are only merged with lines provided they satisfy a distance requirement. The fifth and final step runs the DBSCAN clustering algorithm, described in\cite{dbscan}, over hits that were not incorporated into lines from the Hough transform or merged with hits already part of a line. 
 
 [TrackKalmanHit - Herb]
 
@@ -606,9 +585,9 @@ The basic event display window, Fig. \ref{argo.evd} shows projections in wire-ti
 The user has the option of overlaying an MC event with the MC truth tracks color coded by particle type. The main display window is completed by a wire viewer, which shows the time series of a selected single wire in any of the views - the displayed wire can be chosen via mouse click or a field entry window.
 All of the above pads have zoom capability. The user can choose what reconstructed objects are displayed, and which module created them, by using a special menu window or by specifying this in the FHICL configuration file at runtime. 
 
-The event display also has additional windows that allow different visualization of some of the reconstruction objects. These include the 3D event display, as shown in fig. \ref{argo.evd} (right) where the 3D Track objects can be viewed in a 3D depiction of the detector, a set of 2D projection views where the :tracks are shown in the X-Z and Y-Z plane instead of the wire-time views, and a Calorimetry view where the track and Shower dE/dx depositions are plotted against MC predictions allowing visual particle identification. 
+The event display has additional windows that allow different visualization of some of the reconstruction objects. These include the 3D event display, as shown in fig. \ref{argo.evd} (right) where the 3D Track objects can be viewed in a 3D depiction of the detector, a set of 2D projection views where the tracks are shown in the X-Z and Y-Z plane instead of the wire-time views, and a Calorimetry view where the track and Shower dE/dx depositions are plotted against MC predictions allowing visual particle identification. 
 
-Since the event display is a LArSoft module it can be run in sequence with other modules in the same job. In this case, using a menu window it is possible to change the FHICL parameters of other modules running in the same job. Using this capability and seeing the results of these changes in the event displays is a useful debugging tool in algorithm development.
+Since the event display is a LArSoft module, it can be run in sequence with other modules in the same job. It is possible to change the FHICL parameters of other modules running in the same job via a menu window. Using this capability and seeing the results of these changes in the event displays is a useful debugging tool in algorithm development.
 
 Figure~\ref{argo.evd} shows an example event display for an ArgoNeuT data event.
 
@@ -638,7 +617,7 @@ NEED WORDS.
 \section{Getting Software and Benchmarking it}
 \subsection{Ways to Contribute}
 
-LArSoft general software is hosted in ten GIT repositories with additional experiment-specific repositories for other source, for example digitization code and configuration files. MultiRepository Build (MRB) compiles code across GIT repositories. Each repository has a test area, a documentation area, and libraries such as EventGenerator, LArG4, HitFinder, VertexFinder, etc.\cite{gian}
+LArSoft general software is hosted in ten Git repositories with additional experiment-specific repositories for other source, for example digitization code and configuration files. MultiRepository Build (MRB) compiles code across Git repositories. Each repository has a test area, a documentation area, and libraries such as EventGenerator, LArG4, HitFinder, VertexFinder, etc.\cite{gian}
 
 To avoid having one developer's code negatively impact other software and to allow for vetting before others use the new software, no development takes place directly on the develop branch of the repository. LArSoft uses the git-flow\cite{git-flow} model which makes it easy for users to have a private version of the software they are working on. This model allows the user to manage different tasks at the same time, each in its own independent branch, developing and testing code while sharing it with other users.\cite{git-control} All LArSoft developers are expected to follow this workflow model to maintain the integrity of the develop branch.
 
@@ -668,6 +647,11 @@ NEED WORDS.
 
 \bibitem{art-ref} https://cdcvs.fnal.gov/redmine/projects/artdaq
 \bibitem{cry} http://nuclear.llnl.gov/simulation/
+\bibitem{genie} C.Andreopoulos et al., The GENIE Neutrino Monte Carlo Generator, Nucl.Instrum.Meth.A614:87-104,2010.
+\bibitem{nuwro} Tomasz Golan, Cezary Juszczak, Jan T. Sobczyk. ``Final State Interactions Effects in Neutrino-Nucleus Interaction,'' Phys.Rev. C86 (2012) 015505.
+\bibitem{gibuu} O. Buss, T. Gaitanos, K. Gallmeister, H. van Hees, M. Kaskulov, O. Lalakulich, A.B. Larionov, T. Leitner, J. Weil, U. Mosel (Giessen U.). Jun 2011. ``Transport-theoretical Description of Nuclear Reactions,'' Phys.Rept. 512 (2012) 1-124. http://gibuu.hepforge.org
+\bibitem{nuance} D. Casper, Nucl.Phys.Proc.Suppl. 112 (2002) 161-170
+\bibitem{hepmc} Matt Dobbs (Victoria U.) , Jorgen Beck Hansen (CERN). ``The HepMC C++ Monte Carlo event record for High Energy Physics,'' Comput.Phys.Commun. 134 (2001) 41-46.
 \bibitem{pdgcode} K. A. Olive {\it et al.} (Particle Data Group), Chin. Phys. C {\bf 38}, 090001 (2014), http://pdg.lbl.gov/
 \bibitem{spectrum} E. Morikawa et al. "Argon, krypton, and xenon excimer luminescence: From the dilute gas to the condensed phase." J. Chem. Phys, 91:1469, 1989.
 \bibitem{fastslow} A Hitachi et al. "Effect of ionization density on the time dependence of luminescence from liquid argon and xenon", Phys. Rev. B 27:5279 (1983). P. Cennini et al, "Detection of scintillation light in coincidence with ionizing tracks in a liquid argon time projection chamber." NIM A: 432(23):240–248, 1999.  R. Acciarri et al, Effects of Nitrogen contamination in liquid Argon, 2008 JINST 5 (2010) P06003.  D. Whittington and S. Mufson, "Scintillation Light from Cosmic-Ray Muons in Liquid Argon", 2014, arXiv:1408.1763
@@ -679,11 +663,7 @@ NEED WORDS.
 \bibitem{reflectances} M Antonello et al.  "Analysis of Liquid Argon Scintillation Light Signals with the ICARUS T600 Detector", Unpublished.
 \bibitem{ester} Ester, M., Kriegel, H.-P., Sander, J., and Xu, X. 1996. "A density-based algorithm for discovering clusters in large spatial databases with noise," Proc. 2nd Int. Conf.
 \bibitem{ROOT} http://root.cern.ch/drupal/
-\bibitem{genie} C.Andreopoulos et al., The GENIE Neutrino Monte Carlo Generator, Nucl.Instrum.Meth.A614:87-104,2010.
-\bibitem{nuwro} Tomasz Golan, Cezary Juszczak, Jan T. Sobczyk. ``Final State Interactions Effects in Neutrino-Nucleus Interaction,'' Phys.Rev. C86 (2012) 015505.
-\bibitem{gibuu} O. Buss, T. Gaitanos, K. Gallmeister, H. van Hees, M. Kaskulov, O. Lalakulich, A.B. Larionov, T. Leitner, J. Weil, U. Mosel (Giessen U.). Jun 2011. ``Transport-theoretical Description of Nuclear Reactions,'' Phys.Rept. 512 (2012) 1-124. http://gibuu.hepforge.org
-\bibitem{nuance} D. Casper, Nucl.Phys.Proc.Suppl. 112 (2002) 161-170
-\bibitem{hepmc} Matt Dobbs (Victoria U.) , Jorgen Beck Hansen (CERN). ``The HepMC C++ Monte Carlo event record for High Energy Physics,'' Comput.Phys.Commun. 134 (2001) 41-46.
+
 \bibitem{designpatterns} Gemma et al., ``Design Patterns,'' Addison-Wesley Longman, Inc., 1995. 
 \bibitem{gian} Petrillo, Gianluca, 2014. "LArSoft: simulation and reconstruction for Liquid Argon TPC," Liquid Argon TPC R\&D Workshop, Fermilab.
 \bibitem{git-flow} http://nvie.com/posts/a-successful-git-branching-model/
