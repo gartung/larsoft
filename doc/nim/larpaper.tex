@@ -125,7 +125,7 @@ LArSoft is a software package for the simulation, reconstruction, and analysis o
 LArSoft  benefits from the experience of multiple experiments.  Each LArTPC provides essentially the same basic information after accounting for small detector differences.  Thus, algorithms developed for one experiment can be directly used by another, as long as the differences in geometry are properly accounted for in the algorithms.  
 
 A liquid argon detector and a sophisticated software toolkit can analyze event topologies typical of neutrino interactions that are difficult to parse and make sense of in traditional legacy technologies. Figure~(ADD bubble chamber and Liquid Argon results picture)
-Liquid argon detectors see every nuance of the event. LArSoft applies reconstruction algorithms to identify clusters of energy deposit, tracks, particle showers, and iteration vertices.
+Liquid argon detectors see every nuance of the event. LArSoft applies reconstruction algorithms to identify clusters of energy deposit, tracks, particle showers, and interaction vertices.
 
 \subsection{Who Uses LArSoft}
 LArSoft is the product of the collaboration between the following experiments and Fermilab.
@@ -149,7 +149,7 @@ LArSoft is the product of the collaboration between the following experiments an
 \subsection{ART}
 The foundation of LArSoft is the ART event processing framework which coordinates event processing via configurable, pluggable modules that add data to, and retrieve data from, events.\cite{art-ref}  An event is one unit of data. It may represent an interaction or any period of collected data.
 
-ART provides many of the services necessary to operate in a production environment, include tools for compiling, installing, packaging, and deploying the system.  ART is developed and support by the Fermilab Scientific Computing Division (SCD) and is used by experiments within the neutrino, astrophysics, and muon programs, including NOvA, Muon G-2, Mu2e, and DarkSide-50, and alongside LArSoft for MicroBooNE, ArgoNeuT, and Lariat.
+ART provides many of the services necessary to operate in a production environment, including tools for compiling, installing, packaging, and deploying the system.  ART is developed and support by the Fermilab Scientific Computing Division (SCD) and is used by experiments within the neutrino, astrophysics, and muon programs, including NOvA, Muon G-2, Mu2e, and DarkSide-50, and alongside LArSoft for MicroBooNE, ArgoNeuT, and Lariat.
 
 \subsection{External Packages}
 \subsubsection{Event Generation}
@@ -566,7 +566,114 @@ After hit finding has completed, the hits in each plane are clustered. The goal 
 
 After lines have been identified in the collection of hits, a set of line merging steps are implemented as the third step to group hits included in the identified lines into track-like and shower-like objects. In the fourth step, the hits not incorporated in lines by the Hough transform are merged into the nearest cluster formed from the identified lines. The hits are only merged with lines provided they satisfy a distance requirement. The fifth and final step runs the DBSCAN clustering algorithm, described in\cite{dbscan}, over hits that were not incorporated into lines from the Hough transform or merged with hits already part of a line. 
 
-[TrackKalmanHit - Herb]
+\subsubsection{Track Kalman Filter}
+
+The track reconstruction problem in a liquid argon TPC can be can be
+broken down into several stages, including pattern recognition
+(identifying hits that belong to a track), trajectory reconstruction,
+and track parameter estimation.  In principle, tracks can be two- or
+three-dimensional objects.  Larsoft uses exclusively three-dimensional
+tracks.
+
+The input data for track reconstruction are hits.  Hits can be thought
+of as representing one-dimensional measurement of a track (namely, the
+drift time) on a measurement surface defined by the charge drift
+direction and the readout wire.  Two or three hits may be combined
+into three-dimensional space points.  Three dimensional track
+reconstruction can proceed from space points or directly from hits.
+
+The Kalman filter algorithm~\cite{kalman} has been widely used in high
+energy physics for track reconstruction for many years.  The Kalman
+filter provides an elegant mathematical solution to the problem of
+finding an optimal track description from a collection of candidate
+measurements (hits or space points), especially in cases where the
+number of measurements is much larger than the number of parameters
+needed to specify a track on a surface (namely five).  The Kalman
+filter can be used for both pattern recognition and parameter
+estimation.  Furthermore, the Kalman filter can use either hits or
+space points as input (both types of Kalman filter exist in larsoft).
+
+The following is a description of the basic Kalman filter algorithm.
+
+\begin{enumerate}
+\item
+Starting from an initial track estimte, generate a predicted
+measurement (hit or space point) and error on the next measurement
+surface.
+\item
+Use the predicted measurement and error to define a road for selecting
+candidate measurements.
+\item
+Use the road defined in the previous step to select hits for inclusion
+in the track.
+\item
+Use the included hits to refine the track estimate.
+\item
+Repeat steps 1--4 until all candidate measurements are included in the
+track or rejected.
+\end{enumerate}
+
+The above description of a skeleton Kalman filter always comes with
+some qualifications and caveats in real cases.  This remainder of this
+section describes some of the qualifications that apply to the
+hit-based Kalman filter in larsoft.
+
+One problem that any Kalman filter must solve with is that the Kalman
+filter algorithm is not self-starting.  That is, an initial estimate
+of the track parameters is required even for the first time you enter
+step one.  In the larsoft hit-based Kalman filter, the initial
+estimate of track parameters at some point along the track is provided
+by a separate seed-track finder.  Here, ``seed tracks'' are
+collections of hits from all views that are reconstructed to form a
+short straight three-dimensional track segment.  The seed-track finder
+is based on a Hough line finder~\cite{ppht} that finds straight track
+segements in each view, and then combines Hough lines from different
+views that are consistent in position and angle into three-dimensional
+objects.
+
+Another problem related to starting tracks is that in the initial
+stages of reconstruction, when the track contains only a few hits, the
+track parameters errors are very large.  The Kalman parameter update
+(step four) can easily force the track parameters out of the range of
+validity of a quadratic approximation of the chisquare function
+between track and hit.  For example, the track direction may be
+perturbed by the Kalman updating equation to such an extent that the
+track effectively reverses direction in one or more views.  To prevent
+this, in the early stages of track reconstruction, the hit Kalman
+filter uses a linearized propagation model that forces the chisquare
+function to be a perfect quadratic form with a minimum close to the
+seed track parameters.  This ensures that the Kalman filter will
+generate a track close to the seed track in the initial stages of
+reconstruction.  After the track parameters are sufficiently small,
+the linearized approximation is abandoned, and the true propagation
+function is used.
+
+A problem that is particular to liquid argon TPCs is that the
+measurement surfaces are intersecting, which means that there is no
+predetermined order in which the measurement surfaces should be
+visited.  To prevent back-and-forth tracking, which would overestimate
+propagation noise, such as multiple Coulomb scattering, the larsoft
+hit Kalman filter chooses the measurement surfaces associated with one
+view as primary, and visits these surfaces in their natural
+predetermined order.  Hits from views other than the primary view are
+added to the track by treating the propagation from the track surface
+to the non-parallel hit measurement surface as part of the measurement
+function.  This measurement proparation is always done using a linear
+approximation (as is the measurement function), and is done without
+propgation noise.
+
+Hit selection (step two) for the larsoft hit-based Kalman filter is
+implemented such that at each measurement surface, the filter accepts
+either zero or one hit.  That is the larsoft hit-based Kalman filter
+does not use a branching track model.  This means that there is the
+possibility that if the Kalman filter accepts a wrong hit, then the
+track may follow the wrong road (e.g. a delta ray), or the track may
+otherwise end prematurely.  Fixing up such ``broken tracks'' relies on
+a ``track-stitching'' algorithm that runs after the initial Kalman
+filter reconstruction.
+
+
+
 
 [Calorimetry and PID - Tingjun]
 
@@ -678,6 +785,9 @@ NEED WORDS.
 \bibitem{flame} L. Fu et al. "FLAME, A Novel Fuzzy Clustering Method for the Analysis of DNA Microarray Data." BMC Bioinformatics, 8:3, 2007.
 \bibitem{ppht} J. Matas et al. "Robust Detection of Lines Using the Progressive Probabilistic Hough Transform." COMPUT VIS IMAGE UND, 78:1, 1999.
 \bibitem{dbscan} E. Martin et al. "A density-based algorithm for discovering clusters in large spatial databases with noise." Proceedings of the Second International Conference on Knowledge Discovery and Data Mining, 226-231, 1996. 
+\bibitem{kalman}
+R.E.~Kalman, J.~Bas.~Eng.~{\bf 82D}, 35 (1960);
+R.E.~Kalman and R.S.~Bucy, J.~Bas.~Eng.~{\bf 83D}, 95 (1961);
 
 \end{thebibliography}
 \clearpage 
