@@ -288,7 +288,7 @@ created during a given event.
 The basic algorithm records particle
 information at the beginning of each track, and provides a readout
 method to return the particle list at the end of each event. However,
-there a number of exceptions or enhancements:
+there are a number of exceptions or enhancements:
 
 \begin{itemize}
 
@@ -335,7 +335,49 @@ there a number of exceptions or enhancements:
 
 \end{itemize}
 
-STILL NEED DESCRIPTION OF USER STACKING ACTION
+\subsubsection{More User Actions}
+\label{susubsec:trackstackingandeventbiasing}
+
+This subsection addresses the issue of improving the statistics of rare events in LArSoft. This is done via track stacking and event biasing.
+
+It may be the case that the user wishes to specify the priority of Geant4's tracking
+within the simulation. That is, one may wish for certain tracks to be stepped
+until their final fates are determined. This may mean we track a particle until it decays or exits the world volume or drops below a kinetic
+energy cut or annihilates, say. Whereas in other cases, we would rather suspend or stop 
+the tracking of this particle and instead track a daughter of an interaction in which the mother participated. 
+This can be desirable, for example, in the case of pursuing a cosmogenic study in which muons need to be tracked in 
+the non-instrumented volume of material surrounding the actual detector, but what's of real concern is the penetration  
+of daughters into the instrumented detector. If the muon initiates an inelastic interaction and then falls below 
+an energy that's likely to produce another such interaction and/or it is kicked into a direction that makes
+it very unlikely that any further daughters would be able to make it to the detector, we would be wise to
+track any daughters of interest from this interaction and abandon or at least delay the tracking of the incident muon.
+If we delay the tracking Geant4 will return to it later in the event or even a subsequent event. If the muon is very far 
+from the active detector after some amount of tracking 
+we can stop the tracking and/or  kill the whole event. This saves valuable processing time and allows us to move 
+immediately onto the next candidate event that might give activity in the detector.
+
+One accomplishes this via track stacking. We do this in LArSoft by defining an optional post-step class 
+called LArStackingAction that derives from UserStackingAction. It is instantiated and used upon proper setting of the desired 
+FHICL job flag. It is then called additionally to the above-described ParticleListAction at each step. One assigns a status to all 
+tracks after the step of interest, then, in a 
+newly implemented virtual method of the derived UserStackingAction class. Namely, one may assign the tracks the status 
+postpone, waiting, kill, or urgent. In this manner Geant4 will switch from its internally decided priority -- likely, 
+to continue tracking the mother particle that it had been tracking -- and will instead track the new particles that
+the user has determined to be higher priority. 
+
+A related topic to track stacking is event biasing. If one wants to explore infrequently occuring physics processes 
+it may not be enough to just dictate which tracks to track in which order. Rare interactions in Geant4 may be made to occur with higher 
+probability than their naturally-dictated rate by artificially increasing their cross-sections. The cosmogenics example study mentioned above is 
+aided by two related strategies that are in this spirit. We can produce the interaction of interest in the detector
+with higher probability than occurs naturally. We can also generate multiple outgoing daughters rather than whatever the low natural
+number may be. This requires careful tracking of the weights of any new 
+particles introduced. In LArSoft we accomplish this by writing physics classes which are processes obeyed by particular particles as per the 
+ConfigurablePhysicsList~\ref{someonehasdescribed_cpls_elsewhere} and which derive from G4WrapperProcess. Secondaries are generated 
+and weights are calculated for all the G4Particles and are preserved and passed down all the way to LArSoft's MCParticles.
+
+
+With a combination of track stacking and event biasing, statistical errors on rare event studies can be greatly reduced, where otherwise
+statistical error will dominate due to the few events of interest that may result even after large batch submissions.
 
 \subsubsection{Readout Geometries}
 \label{sec:detsim}
