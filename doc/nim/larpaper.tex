@@ -107,7 +107,7 @@
 \ead{tjyang@fnal.gov}
 %%\hspace{2cm}                         
 \begin{abstract}
-A common software package for the simulation, reconstruction, and analysis of Liquid Argon TPC (LArTPC) detectors is being developed as a collaboration across multiple experiments at Fermilab, with the core framework supported by Laboratory staff. We describe the architecture of the software and collaboration that provides the value delivered by the common package. We then describe the various components explaining the development and integration model for the common and experiment specific aspects – including the core framework, detector geometry, electronics response, package configuration, and algorithms. Finally we describe how LArSoft is being used, and in development for being used, by the multiple experiments that are participating.
+A common software package for the simulation, reconstruction, and analysis of Liquid Argon TPC (LArTPC) detectors is being developed as a collaboration across multiple experiments at Fermilab, with the core framework supported by Laboratory staff. The architecture of the software and collaboration that provides the value delivered by the common package are described, along with the various components explaining the development and integration model for the common and experiment specific aspects including the core framework, detector geometry, electronics response, package configuration, and algorithms.
 
 \end{abstract}
 \tableofcontents
@@ -338,46 +338,40 @@ there are a number of exceptions or enhancements:
 \subsubsection{More User Actions}
 \label{susubsec:trackstackingandeventbiasing}
 
-This subsection addresses the issue of improving the statistics of rare events in LArSoft. This is done via track stacking and event biasing.
+The statistical errors on rare event studies in LArSoft can be improved via track stacking and event biasing.
 
-It may be the case that the user wishes to specify the priority of Geant4's tracking
-within the simulation. That is, one may wish for certain tracks to be stepped
-until their final fates are determined. This may mean we track a particle until it decays or exits the world volume or drops below a kinetic
-energy cut or annihilates, say. Whereas in other cases, we would rather suspend or stop 
-the tracking of this particle and instead track a daughter of an interaction in which the mother participated. 
-This can be desirable, for example, in the case of pursuing a cosmogenic study in which muons need to be tracked in 
-the non-instrumented volume of material surrounding the actual detector, but what's of real concern is the penetration  
-of daughters into the instrumented detector. If the muon initiates an inelastic interaction and then falls below 
-an energy that's likely to produce another such interaction and/or it is kicked into a direction that makes
-it very unlikely that any further daughters would be able to make it to the detector, we would be wise to
+The priority of Geant4 tracking within a simulation defaults to stepping through certain tracks
+until their final fates are determined by tracking a particle until it decays, or exits the world volume, or drops below a kinetic
+energy cut, or annihilates. But it may be desired to suspend or stop 
+the tracking of a particle and instead track a daughter of an interaction such as when pursuing a cosmogenic study in which muons need to be tracked in 
+the non-instrumented volume of material surrounding the actual detector, but the real concern is the penetration of daughters into the instrumented detector. If the muon initiates an inelastic interaction and then falls below 
+an energy that's likely to produce another such interaction and/or it is kicked in a direction that makes
+it unlikely that any further daughters would make it to the detector, it is wise to
 track any daughters of interest from this interaction and abandon or at least delay the tracking of the incident muon.
-If we delay the tracking Geant4 will return to it later in the event or even a subsequent event. If the muon is very far 
-from the active detector after some amount of tracking 
-we can stop the tracking and/or  kill the whole event. This saves valuable processing time and allows us to move 
+If the tracking is delayed, Geant4 will return to it later in the event or in a subsequent event. If the muon is very far from the active detector after some amount of tracking, the tracking can be stopped or the event killed. This saves valuable processing time since it provides movement
 immediately onto the next candidate event that might give activity in the detector.
 
-One accomplishes this via track stacking. We do this in LArSoft by defining an optional post-step class 
+Track stacking is done in LArSoft by defining an optional post-step class 
 called LArStackingAction that derives from UserStackingAction. It is instantiated and used upon proper setting of the desired 
-FHICL job flag. It is then called additionally to the above-described ParticleListAction at each step. One assigns a status to all 
-tracks after the step of interest, then, in a 
-newly implemented virtual method of the derived UserStackingAction class. Namely, one may assign the tracks the status 
-postpone, waiting, kill, or urgent. In this manner Geant4 will switch from its internally decided priority -- likely, 
-to continue tracking the mother particle that it had been tracking -- and will instead track the new particles that
+FHICL job flag. In addition to the ParticleListAction 
+described in Section~\ref{sec:useractions}, LArStackingAction is called at each step.
+A status is assigned to all 
+tracks after the step of interest in a 
+newly implemented virtual method of the derived UserStackingAction class. 
+Tracks may be assigned the status of
+postpone, waiting, kill, or urgent. Geant4 will switch from its internally decided priority (usually to continue tracking the mother particle) to track the new particles that
 the user has determined to be higher priority. 
 
-A related topic to track stacking is event biasing. If one wants to explore infrequently occuring physics processes 
-it may not be enough to just dictate which tracks to track in which order. Rare interactions in Geant4 may be made to occur with higher 
-probability than their naturally-dictated rate by artificially increasing their cross-sections. The cosmogenics example study mentioned above is 
-aided by two related strategies that are in this spirit. We can produce the interaction of interest in the detector
-with higher probability than occurs naturally. We can also generate multiple outgoing daughters rather than whatever the low natural
+Event biasing is needed to explore infrequently occurring physics processes since it may
+not be enough to just dictate what to track in which order. Rare interactions in Geant4 may be made to occur with higher 
+probability than their naturally-dictated rate by artificially increasing their cross-sections. The cosmogenics example mentioned above is 
+aided by two related strategies to produce the interaction of interest in the detector
+with higher probability than occurs naturally. It is also possible to generate multiple outgoing daughters rather than whatever the low natural
 number may be. This requires careful tracking of the weights of any new 
-particles introduced. In LArSoft we accomplish this by writing physics classes which are processes obeyed by particular particles as per the 
-ConfigurablePhysicsList~\ref{someonehasdescribed_cpls_elsewhere} and which derive from G4WrapperProcess. Secondaries are generated 
-and weights are calculated for all the G4Particles and are preserved and passed down all the way to LArSoft's MCParticles.
+particles introduced. This is done in LArSoft by writing physics classes which are processes obeyed by particular particles derived from the G4WrapperProcess. Secondaries are generated 
+and weights are calculated for all the G4Particles. These are preserved and passed down all the way to LArSoft's MCParticles.
 
-
-With a combination of track stacking and event biasing, statistical errors on rare event studies can be greatly reduced, where otherwise
-statistical error will dominate due to the few events of interest that may result even after large batch submissions.
+Without a combination of track stacking and event biasing, statistical errors on rare event studies would dominate due to the few events of interest that may result even after large batch submissions.
 
 \subsubsection{Readout Geometries}
 \label{sec:detsim}
@@ -608,38 +602,39 @@ After hit finding has completed, the hits in each plane are clustered. The goal 
 
 After lines have been identified in the collection of hits, a set of line merging steps are implemented as the third step to group hits included in the identified lines into track-like and shower-like objects. In the fourth step, the hits not incorporated in lines by the Hough transform are merged into the nearest cluster formed from the identified lines. The hits are only merged with lines provided they satisfy a distance requirement. The fifth and final step runs the DBSCAN clustering algorithm, described in\cite{dbscan}, over hits that were not incorporated into lines from the Hough transform or merged with hits already part of a line. 
 
+
 \subsubsection{Track Kalman Filter}
 
-The track reconstruction problem in a liquid argon TPC can be can be
-broken down into several stages, including pattern recognition
+The track reconstruction problem in a liquid argon TPC can be
+divided into several stages, including pattern recognition
 (identifying hits that belong to a track), trajectory reconstruction,
-and track parameter estimation.  In principle, tracks can be two- or
-three-dimensional objects.  Larsoft uses exclusively three-dimensional
+and track parameter estimation. Although in principle tracks can be two or
+three-dimensional objects, Larsoft uses only three-dimensional
 tracks.
 
-The input data for track reconstruction are hits.  Hits can be thought
-of as representing one-dimensional measurement of a track (namely, the
+Hits are the input data for track reconstruction.  Hits
+represent a one-dimensional measurement of a track (the
 drift time) on a measurement surface defined by the charge drift
-direction and the readout wire.  Two or three hits may be combined
-into three-dimensional space points.  Three dimensional track
+direction and the readout wire. Two or three hits may be combined
+into three-dimensional space points. Three dimensional track
 reconstruction can proceed from space points or directly from hits.
 
 The Kalman filter algorithm~\cite{kalman} has been widely used in high
-energy physics for track reconstruction for many years.  The Kalman
+energy physics for track reconstruction. The Kalman
 filter provides an elegant mathematical solution to the problem of
 finding an optimal track description from a collection of candidate
-measurements (hits or space points), especially in cases where the
-number of measurements is much larger than the number of parameters
-needed to specify a track on a surface (namely five).  The Kalman
+measurements that are hits or space points, especially in cases where the
+number of measurements is much larger than the five parameters
+needed to specify a track on a surface.  The Kalman
 filter can be used for both pattern recognition and parameter
-estimation.  Furthermore, the Kalman filter can use either hits or
-space points as input (both types of Kalman filter exist in larsoft).
+estimation.  Furthermore, the Kalman filter in LArSoft can use either hits or
+space points as input.
 
 The following is a description of the basic Kalman filter algorithm.
 
 \begin{enumerate}
 \item
-Starting from an initial track estimte, generate a predicted
+Starting from an initial track estimate, generate a predicted
 measurement (hit or space point) and error on the next measurement
 surface.
 \item
@@ -655,32 +650,30 @@ Repeat steps 1--4 until all candidate measurements are included in the
 track or rejected.
 \end{enumerate}
 
-The above description of a skeleton Kalman filter always comes with
-some qualifications and caveats in real cases.  This remainder of this
+The skeleton Kalman filter requires qualifications and caveats in real cases. The remainder of this
 section describes some of the qualifications that apply to the
-hit-based Kalman filter in larsoft.
+hit-based Kalman filter in LArSoft.
 
-One problem that any Kalman filter must solve with is that the Kalman
-filter algorithm is not self-starting.  That is, an initial estimate
-of the track parameters is required even for the first time you enter
-step one.  In the larsoft hit-based Kalman filter, the initial
-estimate of track parameters at some point along the track is provided
-by a separate seed-track finder.  Here, ``seed tracks'' are
+The Kalman
+filter algorithm is not self-starting. That is, an initial estimate
+of the track parameters is required even for the first time.  In the LArSoft hit-based Kalman filter, the initial
+estimate of track parameters is provided
+by a separate seed-track finder. Seed tracks are
 collections of hits from all views that are reconstructed to form a
-short straight three-dimensional track segment.  The seed-track finder
+short straight three-dimensional track segment. The seed-track finder
 is based on a Hough line finder~\cite{ppht} that finds straight track
-segements in each view, and then combines Hough lines from different
-views that are consistent in position and angle into three-dimensional
+segments in each view, and then combines 
+Hough lines that are consistent in position and angle from different views into three-dimensional
 objects.
 
-Another problem related to starting tracks is that in the initial
+The initial
 stages of reconstruction, when the track contains only a few hits, the
-track parameters errors are very large.  The Kalman parameter update
+track parameters errors are very large. The Kalman parameter update
 (step four) can easily force the track parameters out of the range of
 validity of a quadratic approximation of the chisquare function
 between track and hit.  For example, the track direction may be
-perturbed by the Kalman updating equation to such an extent that the
-track effectively reverses direction in one or more views.  To prevent
+perturbed by the Kalman updating equation so that the
+track reverses direction in one or more views.  To prevent
 this, in the early stages of track reconstruction, the hit Kalman
 filter uses a linearized propagation model that forces the chisquare
 function to be a perfect quadratic form with a minimum close to the
@@ -690,32 +683,27 @@ reconstruction.  After the track parameters are sufficiently small,
 the linearized approximation is abandoned, and the true propagation
 function is used.
 
-A problem that is particular to liquid argon TPCs is that the
-measurement surfaces are intersecting, which means that there is no
+The measurement surfaces in liquid argon TPCs are intersecting, which means there is no
 predetermined order in which the measurement surfaces should be
 visited.  To prevent back-and-forth tracking, which would overestimate
-propagation noise, such as multiple Coulomb scattering, the larsoft
+propagation noise, such as multiple Coulomb scattering, the LArSoft
 hit Kalman filter chooses the measurement surfaces associated with one
 view as primary, and visits these surfaces in their natural
 predetermined order.  Hits from views other than the primary view are
 added to the track by treating the propagation from the track surface
 to the non-parallel hit measurement surface as part of the measurement
-function.  This measurement proparation is always done using a linear
-approximation (as is the measurement function), and is done without
-propgation noise.
+function.  This measurement propagation is always done using a linear
+approximation as is the measurement function, and is done without
+propagation noise.
 
-Hit selection (step two) for the larsoft hit-based Kalman filter is
+The LArSoft hit-based Kalman filter
+does not use a branching track model. Hit selection (step two) for the LArSoft hit-based Kalman filter is
 implemented such that at each measurement surface, the filter accepts
-either zero or one hit.  That is the larsoft hit-based Kalman filter
-does not use a branching track model.  This means that there is the
-possibility that if the Kalman filter accepts a wrong hit, then the
+either zero or one hit. If the Kalman filter accepts a wrong hit, the
 track may follow the wrong road (e.g. a delta ray), or the track may
-otherwise end prematurely.  Fixing up such ``broken tracks'' relies on
-a ``track-stitching'' algorithm that runs after the initial Kalman
+otherwise end prematurely.  Fixing broken tracks relies on
+a track-stitching algorithm that runs after the initial Kalman
 filter reconstruction.
-
-
-
 
 [Calorimetry and PID - Tingjun]
 
