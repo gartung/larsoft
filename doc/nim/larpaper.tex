@@ -147,33 +147,34 @@ LArSoft is the product of the collaboration between the following experiments an
 
 \section{Framework and Tools}
 \subsection{ART}
-The foundation of LArSoft is the ART event processing framework which coordinates event processing via configurable, pluggable modules that add data to, and retrieve data from, events.\cite{art-ref}  An event is one unit of data. It may represent an interaction or any period of collected data.
+The foundation of LArSoft is the ART event processing framework which coordinates event processing via configurable, pluggable modules that add data to, and retrieve data from, events.~\cite{art-ref}  An event is one unit of data. It may represent an interaction or any period of collected data.
 
-ART provides many of the services necessary to operate in a production environment, including tools for compiling, installing, packaging, and deploying the system.  ART is developed and support by the Fermilab Scientific Computing Division (SCD) and is used by experiments within the neutrino, astrophysics, and muon programs, including NOvA, Muon G-2, Mu2e, and DarkSide-50, and alongside LArSoft for MicroBooNE, ArgoNeuT, and Lariat.
+ART provides many of the services necessary to operate in a production environment, including tools for compiling, installing, packaging, and deploying the system.  ART is developed and supported by the Fermilab Scientific Computing Division (SCD) and is used by experiments within the neutrino, astrophysics, and muon programs, including NOvA, Muon G-2, Mu2e, and DarkSide-50, and alongside LArSoft for MicroBooNE, ArgoNeuT, and Lariat.
 
 \subsection{External Packages}
 \subsubsection{Event Generation}
-LArSoft makes use of the NuSoft packages that provide a common interface to event generators, Geant4 and event display libraries developed for use by all neutrino experiments. The packages used include:    EventDisplayBase, EventGeneratorBase, G4Base, MagneticField, NuReweight and SimulationBase.
+LArSoft makes use of the NuSoft packages that provide a common interface to event generators, Geant4 and event display libraries developed for use by all neutrino experiments. The packages used include: EventDisplayBase, EventGeneratorBase, G4Base, MagneticField, NuReweight and SimulationBase.
 
 There are several different ways to create events for LArSoft:
 \begin{enumerate}
-\item{CRY - a third-party package to simulate cosmic rays documented at \cite{cry}}
+\item{CRY - a third-party package to simulate cosmic rays~\cite{cry}}
 \item{External neutrino interaction generators used to produce neutrinos in the Monte Carlo simulation. There are several generators which can supply input to LArSoft:}
 \begin{enumerate}
-\item{GENIE\cite{genie} - the standard neutrino event generator in LArSoft}
-\item{NuWro\cite{nuwro} - a neutrino event generator with potentially improved spectral functions for liquid argon}
-\item{GIBUU\cite{gibuu} - a theory-code framework that was mainly developed for different classes of reactions other than neutrinos}
-\item{NUANCE\cite{nuance} - an older neutrino event generator used in MiniBooNE; it is available to compare the results of MiniBooNE and MicroBooNE simulations}
+\item{GENIE~\cite{genie} - the standard neutrino event generator in LArSoft}
+\item{NuWro~\cite{nuwro} - a neutrino event generator with potentially improved spectral functions for liquid argon}
+\item{GIBUU~\cite{gibuu} - a theory-code framework that was mainly developed for different classes of reactions other than neutrinos}
+\item{NUANCE~\cite{nuance} - an older neutrino event generator used in MiniBooNE; it is available to compare the results of MiniBooNE and MicroBooNE simulations}
 \end{enumerate}
 \item{Single - creation of single participle spill or multiple particles with the initial position, momenta, and the spread of momenta and starting positions specified in the job file.}
 \item{LightSource - simulation of placing an extended, isotropic light source within the TPC volume to generate a stream of photons.}
-\item{TextFileGen - accepts a text file of HepMC\cite{hepmc} event records.}
+\item{TextFileGen - accepts a text file of HepMC~\cite{hepmc} event records.}
 \end{enumerate}
 
 \subsubsection{Detector Simulation}
 NEED WORDS
 
 \subsection{Geometry Description Requirements}
+\label{sec-geom-desc}
 LArSoft uses the Geometry Description Markup Language (GDML) which is an application-independent geometry description format based on Extensible Markup Language (XML.) 
 The Geometry package contains a general interface into the detector descriptions of the different experiments so other packages do not depend on the detector. 
 
@@ -185,9 +186,9 @@ The Geometry package contains a general interface into the detector descriptions
 \end{figure}
 
 As shown in Figure~\ref{geo-vol.img},
-the highest level volume is World which contains all elements of the geometry to be accounted for in the simulation and should be sized adequately to account for any features of the detector surroundings that are important for the simulation. For example, if there is a huge mass of rock near the detector that could alter the cosmic ray flux from that direction, it should be simulated. There is only one detector enclosure volume which can contain many Cryostat volumes, which in turn can each contain many TPC volumes. Each TPC volume contains only one TPCActive volume, which defines the active volume of liquid argon that is read out by the detector. Any liquid argon that is outside of the drift field would not be part of volTPCActive. It is assumed that volTPCActive is simply a volume of liquid argon with no sub-volumes in it. 
+the highest level volume is World which contains all elements of the geometry to be accounted for in the simulation and should be sized adequately to account for any features of the detector surroundings that are important for the simulation. For example, a huge mass of rock near the detector could alter the cosmic ray flux from that direction, it should be simulated. There is only one detector enclosure volume which can contain many Cryostat volumes, which can each contain many TPC volumes. Each TPC volume contains only one TPCActive volume, which defines the active volume of liquid argon that is read out by the detector. Any liquid argon that is outside of the drift field would not be part of volTPCActive. It is assumed that volTPCActive is simply a volume of liquid argon with no sub-volumes in it. 
 
-The TPC volume contains many TPCPlaneXXX volumes that describe the wire planes. The TPCPlaneXXX volume contains many TPCWireXXX volumes that each describe a wire in the detector. The Geant4 binding and the ROOT binding support the GDML import and export for reading GDML files and writing out GDML files.
+The TPC volume contains many TPCPlaneXXX volumes that describe the wire planes. The TPCPlaneXXX volume contains many TPCWireXXX volumes that each describe a wire in the detector. The Geant4 binding and the ROOT binding support the GDML import and export for reading and writing GDML files.
                     
 \section{Simulation Mechanics}
 
@@ -199,7 +200,7 @@ LArSoft-specific data products include:
 \begin{itemize}
 
 \item{the MCParticle which stores, per particle, a unique integer to index the particle in the list,}
-\item{the PDG-recommended particle ID code\cite{pdgcode}, }
+\item{the PDG-recommended particle ID code~\cite{pdgcode}, }
 \item{the counter number of its parent particle,}
 \item{its mass,}
 \item{the position and time of its starting point or of the first point to be simulated
@@ -207,7 +208,7 @@ for a particle entering from outside the active volume, and}
 \item{its momentum and energy.}
 \end{itemize}
 A status code indicates which particles are to be simulated and which
-are stored by the generator for purposes in extracting history and parentage as is the
+are stored by the generator for extracting history and parentage as is the
 case of $\pi^0\rightarrow\gamma\gamma$ decays, or particles that are absorbed within
 nuclei.
 
@@ -231,14 +232,14 @@ But storing the first few steps of an electromagnetic shower
 is needed to characterize algorithms that separate showers initiated by electrons from those initiated by photons. So there are times when it is appropriate to loosen
 the requirements on whether to accept additional particles for subsequent storage.
 
-The detector response simulation data products are considered Monte Carlo truth-level information. The SimChannel data product accumulates information for each readout channel of the TPC, listing how many electrons drifted past it for the induction wires or were collected. Each of these charge deposits contains a total charge, a time, and an identifier of which Geant4 track was responsible for the charge deposition. This charge is simulated as described in 
+The detector response simulation data products are considered Monte Carlo truth-level information. The SimChannel data product accumulates information for each readout channel of the TPC, listing how many electrons drifted past it for the induction wires or were collected. Each of these charge deposits contains a total charge, a time, and an identifier of which Geant4 track was responsible for the charge deposition. The simulation of this charge is described in 
 Section~\ref{sec:ionization}.
 
-Similarly to the TPC channel response truth information data products, photon detector truth information
+Similar to the TPC channel response truth information data products, photon detector truth information
 is stored in the event record.  The SimPhotons data product stores information for each photon
 that enters a sensitive OpDet volume.  It contains data members that specify the initial position of the
 photon, as well as the time and the energy.    
-This data product can be used with different photon detection technologies, such as detectors with wavelength shifting material covering the PMTs, and detectors with SiPMs attached to wavelength-shifting materials and light collectors.
+This data product can be used with different photon detection technologies, such as detectors with wavelength shifting material covering the PMTs, and detectors with Silicon Photomultipliers (SiPMs) attached to wavelength-shifting materials and light collectors.
 
 LArTPC detectors can have detector components in addition to the TPC wires and photon detectors.
 For example, a detector may have external scintillator paddles, or other technology for external veto
@@ -248,7 +249,7 @@ for these auxiliary detectors.  Its data members store the Geant4 track ID, as w
 The goal of the simulation is to produce simulated data that matches what is expected from the detector for
 the different input physics processes, along with detector resolution and noise effects.  These simulation
 steps are described in Sections~\ref{sec:adapt} and~\ref{sec:ionization}. The output of this simulation is a vector of ADC counts,
-one per sample time (typically 500 ns), for each readout channel in the detector.  Additional data members
+one per sample time (typically 500 $ns$), for each readout channel in the detector.  Additional data members
 store the pedestal and specify the compression algorithm type and version, such as Huffman coding or zero 
 suppression. These are stored in a data product called RawDigit.
 
@@ -265,7 +266,12 @@ data product schema evolution features.
 \subsection{Adaptations for Using Geant4}
 \label{sec:adapt}
 
-The truth particles generated in the event generator step are passed to a Geant4 based detector simulation called LArG4.  The geometry GDML file is parsed to create a Geant4 detector description using the built-in GDML parser, which interfaces to LArSoft via the DetectorConstruction LArSoft class.
+The truth particles generated in the event generator step are passed to a Geant4 
+based detector simulation called LArG4.  The geometry GDML file 
+described in section~\ref{sec-geom-desc} is parsed to create a Geant4 detector description using
+Geant4's GDML parser, which interfaces to LArSoft via the DetectorConstruction LArSoft class.
+The following sections describe some features that distinguish
+LArG4 from standard Geant4 simulations.
 
 \subsubsection{User Action Lists}
 \label{sec:useractions}
@@ -276,7 +282,7 @@ record information related to the secondary particles created during
 the detector simulation. These hooks are organized in the class
 UserAction, which is part of the nutools package external to
 LArSoft. UserAction uses a variant of the Abstract Factory design
-pattern \cite{designpatterns} to simplify the handling of multiple
+pattern~\cite{designpatterns} to simplify the handling of multiple
 simulation tasks, each of which might require access to Geant4's user
 hooks.
 
@@ -322,7 +328,7 @@ there are a number of exceptions or enhancements:
   annihilation, or ionization should be included in the output. The
   default value of this parameter is to not include them. 
 
-\item The MCParticle data product includes MCTrajectory that can include the complete Geant4 trajectory
+\item The MCParticle data product includes MCTrajectory that can cover the complete Geant4 trajectory
   information for a track. At each step within a particle's
   trajectory, the Lorenz four-position and four-momentum can be
   stored. This is useful for event displays and track-fitting studies,
@@ -341,9 +347,11 @@ there are a number of exceptions or enhancements:
 The statistical errors on rare event studies in LArSoft can be improved via track stacking and event biasing.
 
 The priority of Geant4 tracking within a simulation defaults to stepping through certain tracks
-until their final fates are determined by tracking a particle until it decays, or exits the world volume, or drops below a kinetic
-energy cut, or annihilates. But it may be desired to suspend or stop 
-the tracking of a particle and instead track a daughter of an interaction such as when pursuing a cosmogenic study in which muons need to be tracked in 
+until their final fates are determined. This is done 
+by tracking a particle until it decays, exits the world volume, drops below a kinetic
+energy cut, or annihilates. It may be desired to suspend or stop 
+the tracking of a particle and instead track a daughter of an interaction. 
+This occurs when pursuing a cosmogenic study in which muons need to be tracked in 
 the non-instrumented volume of material surrounding the actual detector, but the real concern is the penetration of daughters into the instrumented detector. If the muon initiates an inelastic interaction and then falls below 
 an energy that's likely to produce another such interaction and/or it is kicked in a direction that makes
 it unlikely that any further daughters would make it to the detector, it is wise to
@@ -376,7 +384,7 @@ Without a combination of track stacking and event biasing, statistical errors on
 \subsubsection{Readout Geometries}
 \label{sec:detsim}
 
-The basic purpose of the Geant4 simulation of a LAr TPC detector is to
+The basic purpose of the Geant4 simulation of a LArTPC detector is to
 model the ionization left by charged particles created by interactions
 in the detector. This information is easy to retrieve using the
 standard Geant4 method GetTotalEnergyDeposit. The next
@@ -392,8 +400,8 @@ short segments and apply the ionization procedure to each segment
 individually. There are two ways to approach this in Geant4:
 
 \begin{itemize}
-\item Set the Geant4 step size to a small value for charge-particle tracks in the LAr TPC.
-\item Divide the LAr TPC into smaller sub-volumes, which will force Geant4 to limit the step size to the boundaries of these volumes.
+\item Set the Geant4 step size to a small value for charge-particle tracks in the LArTPC.
+\item Divide the LArTPC into smaller sub-volumes, which will force Geant4 to limit the step size to the boundaries of these volumes.
 \end{itemize}
 
 The second approach is taken in LArG4. This procedure permits LArG4 to
@@ -423,7 +431,7 @@ Section~\ref{sec:fullopticalsim} are defined separately in yet another
 parallel geometry, and share no characteristics with the voxels
 described in this Section.)
 
-In {\tt LArG4/LArVoxelReadoutGeometry}, a copy of the LAr TPC geometry
+In LArVoxelReadoutGeometry, a copy of the LArTPC geometry
 is placed in a parallel world, then subdivided into voxels; each voxel
 is defined to be a Geant4 sensitive volume. As Geant4 tracks charged
 particles through the parallel voxel geometry, it calls the
@@ -457,19 +465,19 @@ Scintillator paddles could be used to veto cosmic ray activity or hadronic showe
 Cherenkov detectors could be used to measure the velocity of incoming particles from a test beam used for studying liquid argon TPC responses.
 A new object was created in LArSoft to allow users to store general information from detectors not related with the TPC, or auxiliary detectors.
 
-For each Geant4 track passing the auxiliary detector volume, the LArSoft object AuxDetSimChannel holds its entering and exiting position, momentum, energy deposited, and LArSoft track identification number.
+For each Geant4 track passing the auxiliary detector volume, the LArSoft object AuxDetSimChannel holds its entering and exiting position, momentum, energy deposited, and LArSoft track ID.
 That information is saved for each auxiliary detector in the output root file.
-This data object allows the use of the Geant4 track identification number to trace back the genesis of a particle crossing the detector, enabling simulation studies and efficiency studies of external auxiliary detectors.
+This data object allows the use of the Geant4 track ID to trace back the genesis of a particle crossing the detector, enabling simulation studies and efficiency studies of external auxiliary detectors.
 
 To add new auxiliary detectors, the user needs to define the detector in the experiment's GDML file.
 LArSoft has a facility to identify those volumes to enable Geant4 to treat them as an active detector.
-As Geant4 encounters a new Geant4 track identification number within the active detector, the AuxDetSimChannel data object stores each entry position and entry momentum.
+As Geant4 encounters a new Geant4 track ID within the active detector, the AuxDetSimChannel data object stores each entry position and entry momentum.
 While Geant4 steps through to the next time slice, each particle's exit position and exit momentum is updated, and the running sum of energy deposited is updated. 
 After the Geant4 steps are exhausted for this detector, the AuxDetSimChannel object has collected all of the simulation data needed for further analysis.
 
 \subsection{New Parameterizations for Ionization}
 \label{sec:ionization}
-- description of how new parameterizations for ionization, etc can be added into the simulation including a description of the mechanism for calculating the amount of ionization charge and scintillation light.  It could include a statement of the available options for that calculation (NEST vs decoupled charge and light) and how a user might add a new method.
+- description of how new parameterizations for ionization, etc can be added into the simulation including a description of the mechanism for calculating the amount of ionization charge and scintillation light.  It could include a statement of the available options for that calculation (NEST vs decoupled charge and light) and how a user might add a new method.~\cite{nest}
 NEED WORDS
 
 \subsection{Incorporating Magnetic Fields}
@@ -479,26 +487,27 @@ throughout any single volume (and it's sub-volumes) of the Geant
 geometry, and will be respected by Geant's particle tracking
 algorithms. There is currently no support for altered electron
 drift directions, nor any explicit support for analyzing events
-in the presence of a non-zero magnetic field.\footnote{Both of these features are planned.}
+in the presence of a non-zero magnetic field although both of these features are planned.
 
 \subsection{Optical Simulation}
 Optical physics simulations in LArSoft can take one of two forms: full or fast simulation.  Both optical simulations are implemented within LArSoft's Geant4 based simulation package and make use of its configurable physics list functionality.  This functionality allows LArSoft simulations to define a custom Geant4 physics list from a set of physics constructors at runtime, and is used to select between full optical, fast optical or no optical simulation. 
 
 \subsubsection{Full Optical Simulation}
-The full simulation involves stepping individual photons through the detector volume.  Each stepping photon is treated as an individual particle in Geant4.  The number of photons stepped is usually reduced by a constant factor representing the optical detector collection efficiency at 128 nm, thereby scaling the photon count at production rather than detection to reduce computation time and memory usage. 
+The full simulation involves stepping individual photons through the detector volume.  Each stepping photon is treated as an individual particle in Geant4.  The number of photons stepped is usually reduced by a constant factor representing the optical detector collection efficiency at 128 $nm$, thereby scaling the photon count at production rather than detection to reduce computation time and memory usage. 
 
 The physics constructor for full optical physics in LArSoft has been adapted from the standard Geant4 optical physics constructor. Default implementations for scintillation and Cerenkov production, Rayleigh scattering, and absorption at boundaries and in the bulk are included. The default implementation of wavelength shifting physics processes is also included, although at present most LArSoft experiments incorporate this into the estimate of the optical detector collection efficiency rather than simulating it at the photon-by-photon level.  A customized, faster reflectivity model is implemented, whereby material boundaries have specified diffuse and specular reflectances for each material boundary type.  
 
 The liquid argon volume's optical characteristics are loaded into LArSoft by a dedicated service, and are globally accessible within the LArSoft framework.  Reconstruction and simulation algorithms can access important optical properties.
 
-Scintillation production is configured with a photon momentum spectrum centered at 9.7 eV and a shape which is taken from \cite{spectrum}.  Singlet and triplet scintillation components are included, with time constants of 6 and 1500 ns, although tensions within the literature suggests these values will require finer tuning.\cite{fastslow} Data from LArSoft experiments will be used to adjust these values.  The scintillation yield is defined per incident particle type using an extension of the relationship shown in \cite{scintyield}, and the absolute yield for a minimum ionizing particle is set to 24,000 photons per MeV, assuming a constant electric field strength of 500 V/cm. 
+Scintillation production is configured with a photon momentum spectrum centered at 9.7 $eV$ and a shape which is taken from~\cite{spectrum}.  Singlet and triplet scintillation components are included, with time constants of 6 and 1500 $ns$, although tensions within the literature suggests these values will require finer tuning.\cite{fastslow}\cite{fastslow2}\cite{fastslow3}\cite{fastslow4}
+Data from LArSoft experiments will be used to adjust these values.  The scintillation yield is defined per incident particle type using an extension of the relationship shown in~\cite{scintyield}, and the absolute yield for a minimum ionizing particle is set to 24,000 photons per million $eV$, assuming a constant electric field strength of 500 $V/cm$. 
 
-Cerenkov photons are produced with yields and energies corresponding to the standard Frank-Tamm spectrum of Cerenkov radiation, given a continuous parameterization of the liquid argon refractive index derived from the references in \cite{RIndex}. Rayleigh scattering and photon-absorption process are enabled, where the scattering length is specified over the range of photon energies from 1.8 eV to 10.8 eV, and is 90 cm at the peak of the argon scintillation spectrum \cite{Rlength}.  The bulk absorption length is set to 2000 m (approximately infinite). Further work to parameterize purity dependent absorption effects may be required, with absorption due to dissolved nitrogen being the most likely additional effect\cite{nitrogen}.
+Cerenkov photons are produced with yields and energies corresponding to the standard Frank-Tamm spectrum of Cerenkov radiation, given a continuous parameterization of the liquid argon refractive index derived from the references in~\cite{RIndex}. Rayleigh scattering and photon-absorption process are enabled, where the scattering length is specified over the range of photon energies from 1.8 $eV$ to 10.8 $eV$, and is 90 $cm$ at the peak of the argon scintillation spectrum~\cite{Rlength}.  The bulk absorption length is set to 2000 $m$ (approximately infinite). Further work to parameterize purity dependent absorption effects may be required, with absorption due to dissolved nitrogen being the most likely additional effect~\cite{nitrogen}.
 
 \label{sec:fullopticalsim}
-The full simulation involves stepping every optical photon individually through the detector volume.  Typical photon yields for an event cause this to be a computationally intensive procedure. The physics constructor has been specially adapted for LArSoft and includes scintillation and Cerenkov production, Rayleigh scattering, reflections at boundaries, absorption at boundaries and in the bulk, and wavelength shifting physics processes.  The configurations of these are described below.
+The full simulation involves stepping every optical photon individually through the detector volume.  Typical photon yields for an event cause this to be a computationally intensive procedure. The physics constructor has been specially adapted for LArSoft and includes scintillation and Cerenkov production, Rayleigh scattering, reflections at boundaries, absorption at boundaries and in the bulk, and wavelength shifting physics processes.
 
-A simplified reflectivity model is used, whereby each type of boundary in the detector is supplied with a wavelength-dependent total reflectivity and specular/diffuse reflection fraction.   For  preliminary  studies,  only the  steel/argon boundaries  at  the  edge of the cryostat are  reflective. All  other  surfaces,  including  wires,  field cage,  etc,  are opaque.  The steel/argon boundaries have a total reflectance of 25\%, of which 50\% is specular\cite{reflectances}.
+A simplified reflectivity model is used, whereby each type of boundary in the detector is supplied with a wavelength-dependent total reflectivity and specular/diffuse reflection fraction.   For  preliminary  studies,  only the  steel/argon boundaries  at  the  edge of the cryostat are  reflective. All  other  surfaces,  including  wires,  field cage,  etc,  are opaque.  The steel/argon boundaries have a total reflectance of 25\%, of which 50\% is specular~\cite{reflectances}.
 
 \begin{figure}[h]
 \centering
@@ -507,9 +516,9 @@ A simplified reflectivity model is used, whereby each type of boundary in the de
 \label{fig:wireplaneabs}
 \end{figure}
 
-For a given surface, any angularly dependent transmission spectrum can be incorporated, including semi-transparent surfaces.  Non-uniform angular dependence of photon transmission can be modeled through the detector wireplanes.    LArSoft derived classes implement optical attenuation by one or many planes of cylindrical wires which are assumed black to 128 nm light.  A cartoon of the wireplane opacity model is shown in figure \ref{fig:wireplaneabs}.
+For a given surface, any angularly dependent transmission spectrum can be incorporated, including semi-transparent surfaces.  Non-uniform angular dependence of photon transmission can be modeled through the detector wireplanes.    LArSoft derived classes implement optical attenuation by one or many planes of cylindrical wires which are assumed black to 128 $nm$ light. A cartoon of the wireplane opacity model is shown in figure~\ref{fig:wireplaneabs}.
 
-Photons are counted at detector volumes whose name matches a string supplied to the LArSoft geometry service.  This volume may represent a photomultiplier tube, or another element defined as optically sensitive, for example, a wavelength shifting surface. At geometry construction time, the volumes matching the appropriate name string in the Geometry Description Markup Languag (GDML) file are assigned optical detector IDs and become sensitive within the LArSoft simulation.
+Photons are counted at detector volumes whose name matches a string supplied to the LArSoft geometry service.  This volume may represent a photomultiplier tube, or another element defined as optically sensitive, for example, a wavelength shifting surface. At geometry construction time, the volumes matching the appropriate name string in the GDML file are assigned optical detector IDs and become sensitive within the LArSoft simulation.
 
 Three parallel world geometries are used in LArSoft as shown in figure \ref{fig:parallelgeom}.
 The sensitive elements are placed in a separate Geant4 parallel world geometry.  Only photons are tracked in this geometry, ensuring the optical  detection process is triggered only for optical photons.  Photon step size is not limited by the TPC voxel size, which provides a significant performance improvement. Upon photon detection, tracking of the photon is stopped. Information about the photon's arrival time and detection location are stored in a detected photon table.  At the end of the run, this table is queried to generate simulated photon data products to store in the event.  The same table is filled by the fast simulation method, and hybrid fast and full simulations can be run.  One use case for such a hybrid simulation would be the fast simulation of scintillation photons. Full simulation is required for Cerenkov photons, which have a directionality and so cannot be consistently treated by the fast simulation.
@@ -529,9 +538,9 @@ The number of optical photons generated per event is of the order of tens of mil
 
 The liquid argon volume of the detector is coarse-grained into optical voxels, the size of which must be smaller than the resolution of the optical system but can be significantly larger than the TPC voxelization scale.  The optical fiducial volume incorporates all detector volumes which are visible to the optical system, which in general extends further than the TPC fiducial volume.  The complete cryostat volume is optically voxelized by default. If there are invisible regions for a specific detector, a smaller optically active volume can be specified.
 
-A dedicated run of the full optical simulation can be made to create a lookup table which contains the visibility of each voxel to each optical detector.  This run creates a specified number of isotropic 128 nm photons, uniformly distributed across each voxel volume at time t=0.  These photons propagate and are detected using the same mechanics as the full photon simulation.  After photon propagation, the number of detected photons at each optical detector is used to build the optical visibility lookup table.  This process is automated by a dedicated photon visibility service, which communicates with the event generation, simulation and analysis parts of the simulation chain to ensure they are correctly configured.
+A dedicated run of the full optical simulation can be made to create a lookup table which contains the visibility of each voxel to each optical detector.  This run creates a specified number of isotropic 128 $nm$ photons, uniformly distributed across each voxel volume at time t=0.  These photons propagate and are detected using the same mechanics as the full photon simulation.  After photon propagation, the number of detected photons at each optical detector is used to build the optical visibility lookup table.  This process is automated by a dedicated photon visibility service, which communicates with the event generation, simulation and analysis parts of the simulation chain to ensure they are correctly configured.
 
-Once the visibility table has been generated, the probability that a given 128 nm photon will reach a specified optical detector can be quickly assessed using the photon visibility service which is available to both simulation and reconstruction modules.  The LArSoft Geant4 simulation can be configured to include the fast optical physics constructor which implements the lookup-based fast scintillation process within simulations. The generation parameters for scintillation light in the fast scintillation process are equivalent to those used in the full simulation.  However, instead of placing optical photons onto the Geant4 particle stack, detected optical photons are inserted directly into the detected photon table probabilistically, based on the visibility of the detector location where the scintillation occurred.  The arrival times of the photons are also smeared based on the distribution of production times.  The sum of detected photons from each voxel where scintillation emission occured gives the total optical detector response.
+Once the visibility table has been generated, the probability that a given 128 $nm$ photon will reach a specified optical detector can be quickly assessed using the photon visibility service which is available to both simulation and reconstruction modules.  The LArSoft Geant4 simulation can be configured to include the fast optical physics constructor which implements the lookup-based fast scintillation process within simulations. The generation parameters for scintillation light in the fast scintillation process are equivalent to those used in the full simulation.  However, instead of placing optical photons onto the Geant4 particle stack, detected optical photons are inserted directly into the detected photon table probabilistically, based on the visibility of the detector location where the scintillation occurred.  The arrival times of the photons are also smeared based on the distribution of production times.  The sum of detected photons from each voxel where scintillation emission occured gives the total optical detector response.
 
 The photon library is both geometry and voxelization scheme specific, and changes to either require a full regeneration, which is a computationally intensive job.  The effects of Rayleigh scattering and absorption are also built into the visibility table.  Changes to the argon scintillation production properties and optical detector efficiencies can be made without regenerating the table.
 
@@ -566,7 +575,7 @@ The reconstruction chain proceeds in the following steps
 \end{enumerate}
 The LArSoft reconstruction chain is complete in that initial algorithms for each step currently exist.  More effort will be required to demonstrate that every, or at least most of the desired, event topologies can be handled in an automated way in the reconstruction chain. Detailed studies of various event classes are in progress to understand the performance of each reconstruction algorithm.
 
-The reconstruction algorithms in LArSoft have benefited from several advances in image analysis techniques developed over the past decade.  For example, the algorithm used to cluster groups of energy depositions together is directly taken from the heavily-cited work of Ester, Kriegel, Sander, and Xu's~\cite{ester} Density Based Spatial Clustering of Applications with Noise (DBSCAN). The two-dimensional (2D) vertex, or more accurately line-endpoint, finding algorithms are based on a corner finding technique used for locating edges and corners in photographic images.  Initial particle tracking is performed using Hough line finding techniques.
+The reconstruction algorithms in LArSoft have benefited from several advances in image analysis techniques developed over the past decade.  For example, the algorithm used to cluster groups of energy depositions together is directly taken from the heavily-cited work of Ester, Kriegel, Sander, and Xu's Density Based Spatial Clustering of Applications with Noise (DBSCAN)~\cite{ester} . The two-dimensional (2D) vertex, or more accurately line-endpoint, finding algorithms are based on a corner finding technique used for locating edges and corners in photographic images.  Initial particle tracking is performed using Hough line finding techniques.
 
 \hspace*{2cm}
 \begin{figure}[h]
@@ -598,9 +607,20 @@ The reconstruction chain used by the MicroBoone experiment to reconstruct cosmic
 
 \subsubsection{Fuzzy Cluster}
 
-After hit finding has completed, the hits in each plane are clustered. The goal of a clustering algorithm is to categorize hits into individual physics objects as best as possible in 2D. Fuzzy Cluster is such an algorithm and proceeds in five stages. The first stage implements the FLAME clustering algorithm originally developed for the analysis of DNA microarray data\cite{flame}. The goal of the FLAME clustering algorithm is to break hits on the selected plane into smaller portions to improve memory usage of the second step, the Hough transform. The Hough transform identifies hits that form line-like objects such as tracks. The particular variant of the Hough transform implemented is the Progressive Probabilistic Hough Transform, which is optimized for speed and light memory usage\cite{ppht}. 
-
-After lines have been identified in the collection of hits, a set of line merging steps are implemented as the third step to group hits included in the identified lines into track-like and shower-like objects. In the fourth step, the hits not incorporated in lines by the Hough transform are merged into the nearest cluster formed from the identified lines. The hits are only merged with lines provided they satisfy a distance requirement. The fifth and final step runs the DBSCAN clustering algorithm, described in\cite{dbscan}, over hits that were not incorporated into lines from the Hough transform or merged with hits already part of a line. 
+After hit finding has completed, the hits in each plane are clustered. The goal of a clustering algorithm is to categorize hits into individual physics objects as best as possible in 2D. Fuzzy Cluster is such an algorithm and proceeds in five stages.
+\begin{enumerate}
+\item
+The first stage implements the FLAME clustering algorithm originally developed for the analysis of DNA microarray data~\cite{flame}. The goal of the FLAME clustering algorithm is to break hits on the selected plane into smaller portions to improve memory usage of the second step, the Hough transform. 
+\item
+The Hough transform identifies hits that form line-like objects such as tracks. The particular variant of the Hough transform implemented is the Progressive Probabilistic Hough Transform, which is optimized for speed and light memory usage~\cite{ppht}. 
+\item
+After lines have been identified in the collection of hits, a set of line merging steps 
+group hits included in the identified lines into track-like and shower-like objects.
+\item
+The hits not incorporated in lines by the Hough transform are merged into the nearest cluster formed from the identified lines. The hits are only merged with lines provided they satisfy a distance requirement. 
+\item
+The final step runs the DBSCAN clustering algorithm, described in~\cite{dbscan}, over hits that were not incorporated into lines from the Hough transform or merged with hits already part of a line. 
+\end{enumerate}
 
 
 \subsubsection{Track Kalman Filter}
@@ -666,10 +686,10 @@ segments in each view, and then combines
 Hough lines that are consistent in position and angle from different views into three-dimensional
 objects.
 
-The initial
+In the initial
 stages of reconstruction, when the track contains only a few hits, the
-track parameters errors are very large. The Kalman parameter update
-(step four) can easily force the track parameters out of the range of
+track parameters errors are very large. The Kalman parameter update in
+step four can easily force the track parameters out of the range of
 validity of a quadratic approximation of the chisquare function
 between track and hit.  For example, the track direction may be
 perturbed by the Kalman updating equation so that the
@@ -705,35 +725,38 @@ otherwise end prematurely.  Fixing broken tracks relies on
 a track-stitching algorithm that runs after the initial Kalman
 filter reconstruction.
 
+\subsubsection{Calorimetry and PID Reconstruction}
 [Calorimetry and PID - Tingjun]
 
-[Shower - Andrzej]
+\subsubsection{Shower Reconstruction}
 
+The electromagnetic shower reconstruction code happens in two steps. The first is a post-clustering stage which examines the existing clusters in terms of their 2D parameters to determine whether the clusters are shower-like or track-like. The user has the possibility of refining the existing clusters by additional merging steps before the final shower-track decision. The selected shower-like clusters are examined to determine their exact starting point, direction and angle in the wire-time plane. These parameters are passed on to the second step, the 3D shower reconstruction code. At this stage, the 2D clusters are matched between the views to obtain at least one cluster in two views per tentative shower. These sets of 2D clusters and their 2D angles and start points are then used to construct the 3D shower axis and start points via trigonometric formulae. This allows the calculation of the shower energy and charge deposition at the start of the shower used in particle identification. The start point, 3D angle, energy and $dE/dx$ values are then saved on the event stack for use by an event builder.
+
+\subsubsection{PANDORA Reconstruction}
 [PANDORA - Andy]
-
+\subsubsection{Optical Reconstruction}
 [Optical - Wes]
 
 \subsection{Event Visualization}
-An important part of the LArSoft suite is the ability to visually display events. The basic event display is constructed based on ROOT GUI libraries \cite{ROOT}.
+An important part of the LArSoft suite is the ability to visually display events. The basic event display is constructed based on ROOT GUI libraries~\cite{ROOT}.
 It can be used to display both data and MC events at any stage of their reconstruction, the latter with the corresponding MC truth information. 
 Navigation between events is either by inserting the desired run and event number in the corresponding fields or by means of the next and previous buttons.
 
-The basic event display window, Fig. \ref{argo.evd} shows projections in wire-time space for each of the views present in the given detector, where the quantity of charge in ADC collected in each wire is denoted by a color scale or intensity of gray-scale. The ADC theshold of what is displayed is a settable parameter. 
-The user has the option of overlaying an MC event with the MC truth tracks color coded by particle type. The main display window is completed by a wire viewer, which shows the time series of a selected single wire in any of the views - the displayed wire can be chosen via mouse click or a field entry window.
+The basic event display window, figure~\ref{2d_event} shows projections in wire-time space for each of the views present in the given detector, where the quantity of charge in ADC collected in each wire is denoted by a color scale or intensity of gray-scale. The ADC threshold of what is displayed is a settable parameter. 
+The user has the option of overlaying an MC event with the MC truth tracks color coded by particle type. The main display window is completed by a wire viewer, which shows the time series of a selected single wire in any of the views; the displayed wire can be chosen via mouse click or a field entry window.
 All of the above pads have zoom capability. The user can choose what reconstructed objects are displayed, and which module created them, by using a special menu window or by specifying this in the FHICL configuration file at runtime. 
 
-The event display has additional windows that allow different visualization of some of the reconstruction objects. These include the 3D event display, as shown in fig. \ref{argo.evd} (right) where the 3D Track objects can be viewed in a 3D depiction of the detector, a set of 2D projection views where the tracks are shown in the X-Z and Y-Z plane instead of the wire-time views, and a Calorimetry view where the track and Shower dE/dx depositions are plotted against MC predictions allowing visual particle identification. 
+The event display has additional windows that allow different visualization of some of the reconstruction objects. These include the 3D event display, as shown in figure~\ref{2d_event} where the 3D Track objects can be viewed in a 3D depiction of the detector, a set of 2D projection views where the tracks are shown in the X-Z and Y-Z plane instead of the wire-time views, and a Calorimetry view where the track and Shower dE/dx depositions are plotted against MC predictions allowing visual particle identification. 
 
-Since the event display is a LArSoft module, it can be run in sequence with other modules in the same job. It is possible to change the FHICL parameters of other modules running in the same job via a menu window. Using this capability and seeing the results of these changes in the event displays is a useful debugging tool in algorithm development.
+Since the event display is a LArSoft module, it can be run in sequence with other modules. It is possible to change the FHICL parameters of other modules running in the same job via a menu window. Using this capability and seeing the results of these changes in the event displays is a useful debugging tool in algorithm development.
 
-Figure~\ref{argo.evd} shows an example event display for an ArgoNeuT data event.
 
 \hspace*{2cm}
 \begin{figure}[h]
 \centering
-\caption{THIS IS CHANGING -- Andrzej M. Szelc A data event in ArgoNeuT, viewed with the event display in LArSoft. Among other emitted particles, two $\pi^0$s are evident.}
-\includegraphics[width=4.0in]{./imgs/ArgoNeuT_event.jpg}
-\label{argo.evd}
+\caption{Event display window}
+\includegraphics[width=4.0in]{./imgs/larsoft_2d_event_display.png}
+\label{2d_event}
 \end{figure}
 
                
@@ -754,27 +777,27 @@ NEED WORDS.
 \section{Getting Software and Benchmarking it}
 \subsection{Ways to Contribute}
 
-LArSoft general software is hosted in ten Git repositories with additional experiment-specific repositories for other source, for example digitization code and configuration files. MultiRepository Build (MRB) compiles code across Git repositories. Each repository has a test area, a documentation area, and libraries such as EventGenerator, LArG4, HitFinder, VertexFinder, etc.\cite{gian}
+LArSoft general software is hosted in ten Git repositories with additional experiment-specific repositories for other source, for example digitization code and configuration files. MultiRepository Build (MRB) compiles code across Git repositories. Each repository has a test area, a documentation area, and libraries such as EventGenerator, LArG4, HitFinder, VertexFinder, etc.~\cite{gian}
 
-To avoid having one developer's code negatively impact other software and to allow for vetting before others use the new software, no development takes place directly on the develop branch of the repository. LArSoft uses the git-flow\cite{git-flow} model which makes it easy for users to have a private version of the software they are working on. This model allows the user to manage different tasks at the same time, each in its own independent branch, developing and testing code while sharing it with other users.\cite{git-control} All LArSoft developers are expected to follow this workflow model to maintain the integrity of the develop branch.
+To avoid having one developer's code negatively impact other software and to allow for vetting before others use the new software, no development takes place directly on the develop branch of the repository. LArSoft uses the git-flow~\cite{git-flow} model which makes it easy for users to have a private version of the software they are working on. This model allows the user to manage different tasks at the same time, each in its own independent branch, developing and testing code while sharing it with other users.~\cite{git-control} All LArSoft developers are expected to follow this workflow model to maintain the integrity of the develop branch.
 
 A group of people, the librarians, vet the code going into all releases. The librarians may examine the changes made to the software in detail as well as looking at the bigger picture to ensure the software module performs the expected task(s). In particular, they ensure that the new code does not negatively impact other LArSoft software. Librarians also ensure the new code is documented and that tests are provided.
 
-Librarians interact with the authors until the code meets the tenants listed at \cite{code-tenants}. LArSoft code is intended to be usable by Liquid Argon TPC with any number of planes, wires, or PMTs. In addition, the code should be flexible and well-documented. 
+Librarians interact with the authors until the code meets the tenants listed at~\cite{code-tenants}. LArSoft code is intended to be usable by Liquid Argon TPC with any number of planes, wires, or PMTs. In addition, the code should be flexible and well-documented. 
 
 \subsection{Testing}
 
 In LArSoft, there is unit testing and integration testing which includes regression tests. Unit tests check very small parts of the code and are run by the author of the code. 
 The integration tests are written by the author of the algorithm or feature that they test. These tests may be executed by other people in the project as well as the author. It must be possible to automatically run unit and  integration tests.
 
-LArSoft has set up a Continuous Integration system based on Jenkins\cite{jenkins} that routinely performs a sequence of tests including unit tests, integration tests and regression tests. On failure, the automatic system notifies LArSoft personnel who contact the responsible person(s), e.g. code authors or librarians, to fix the error.
+LArSoft has set up a Continuous Integration system based on Jenkins~\cite{jenkins} that routinely performs a sequence of tests including unit tests, integration tests and regression tests. On failure, the automatic system notifies LArSoft personnel who contact the responsible person(s), e.g. code authors or librarians, to fix the error.
 
 \subsection{Resource Usage}
 
 A rough estimate of resource usage can be obtained by running standard ART services called TimeService and SimpleMemoryCheck. TimeService gives an estimate of the time used by the module to perform its task. SimpleMemoryCheck monitors the usage of memory (RAM) by the whole program. In order for jobs to run smoothly in a GRID or remote environment, the job should use less than 2 Gigabyte of memory, and less than 48 hours of CPU time.
 
-A resource coordinator in LArSoft checks for excessive usage, and if found, analysis is done using tools like Valgrind\cite{valgrind}, Gperftools\cite{gperf}, and Allinea.\cite {allinea}.
-The code author is notified by the resource coordinator of the issue and together they develop a solution to the resource problem. Most typical problems relate to the use of data structures, and can be solved by following the ART guidelines.\cite{art-guide}
+A resource coordinator in LArSoft checks for excessive usage, and if found, analysis is done using tools like Valgrind~\cite{valgrind}, Gperftools~\cite{gperf}, and Allinea.~\cite {allinea}.
+The code author is notified by the resource coordinator of the issue and together they develop a solution to the resource problem. Most typical problems relate to the use of data structures, and can be solved by following the ART guidelines.~\cite{art-guide}
  
 \section{Summary}
 NEED WORDS.
@@ -790,8 +813,13 @@ NEED WORDS.
 \bibitem{nuance} D. Casper, Nucl.Phys.Proc.Suppl. 112 (2002) 161-170
 \bibitem{hepmc} Matt Dobbs (Victoria U.) , Jorgen Beck Hansen (CERN). ``The HepMC C++ Monte Carlo event record for High Energy Physics,'' Comput.Phys.Commun. 134 (2001) 41-46.
 \bibitem{pdgcode} K. A. Olive {\it et al.} (Particle Data Group), Chin. Phys. C {\bf 38}, 090001 (2014), http://pdg.lbl.gov/
+\bibitem{designpatterns} Gemma et al., ``Design Patterns,'' Addison-Wesley Longman, Inc., 1995. 
+\bibitem{nest} http://nest.physics.ucdavis.edu/site/
 \bibitem{spectrum} E. Morikawa et al. "Argon, krypton, and xenon excimer luminescence: From the dilute gas to the condensed phase." J. Chem. Phys, 91:1469, 1989.
-\bibitem{fastslow} A Hitachi et al. "Effect of ionization density on the time dependence of luminescence from liquid argon and xenon", Phys. Rev. B 27:5279 (1983). P. Cennini et al, "Detection of scintillation light in coincidence with ionizing tracks in a liquid argon time projection chamber." NIM A: 432(23):240–248, 1999.  R. Acciarri et al, Effects of Nitrogen contamination in liquid Argon, 2008 JINST 5 (2010) P06003.  D. Whittington and S. Mufson, "Scintillation Light from Cosmic-Ray Muons in Liquid Argon", 2014, arXiv:1408.1763
+\bibitem{fastslow} A Hitachi et al. "Effect of ionization density on the time dependence of luminescence from liquid argon and xenon", Phys. Rev. B 27:5279 (1983). 
+\bibitem{fastslow2} P. Cennini et al, "Detection of scintillation light in coincidence with ionizing tracks in a liquid argon time projection chamber." NIM A: 432(23):240–248, 1999. 
+\bibitem{fastslow3} R. Acciarri et al, Effects of Nitrogen contamination in liquid Argon, 2008 JINST 5 (2010) P06003.  
+\bibitem{fastslow4} D. Whittington and S. Mufson, "Scintillation Light from Cosmic-Ray Muons in Liquid Argon", 2014, arXiv:1408.1763
 \bibitem{scintyield} Tadayoshi Doke, Akira Hitachi, Jun Kikuchi, Kimiaki Masuda, Hiroyuki Okada, and Eido Shibamura. "Absolute scintillation yields in liquid argon and xenon for various particles." Japanese Journal of Applied Physics, 41(Part 1, No. 3A):1538–1545, 2002.
 \bibitem{RIndex} A. C. Sinnock and B. L. Smith. "Refractive indices of the condensed inert gases." Phys. Rev. 181:1297–1307, May 1969.   R. K. Teague and C. J. Pings. "Refractive index and the lorentz–lorenz function for gaseous and liquid argon, including a study of the coexistence curve near the critical state." J Chem Phys, 48(11):4973–4984, 1968.
 \bibitem{Rlength} G.M. Seidel, R.E. Lanou, and W. Yao, "Rayleigh scattering in rare-gas liquids", NIM A489 (2002) 189.   N. Ishida et al., "Attenuation length measurements of scintillation light in liquid rare gases and their mixtures using an improved reflection suppresser", NIM A384 (1997) 380. M. Sneep and W. Ubachs, "Direct measurement of the Rayleigh scattering cross section in various gasses", J. Quant. Spectrosc. Radiat. Transf. 92 (2005) 293.
@@ -799,9 +827,13 @@ NEED WORDS.
 
 \bibitem{reflectances} M Antonello et al.  "Analysis of Liquid Argon Scintillation Light Signals with the ICARUS T600 Detector", Unpublished.
 \bibitem{ester} Ester, M., Kriegel, H.-P., Sander, J., and Xu, X. 1996. "A density-based algorithm for discovering clusters in large spatial databases with noise," Proc. 2nd Int. Conf.
+\bibitem{flame} L. Fu et al. "FLAME, A Novel Fuzzy Clustering Method for the Analysis of DNA Microarray Data." BMC Bioinformatics, 8:3, 2007.
+\bibitem{ppht} J. Matas et al. "Robust Detection of Lines Using the Progressive Probabilistic Hough Transform." COMPUT VIS IMAGE UND, 78:1, 1999.
+\bibitem{dbscan} E. Martin et al. "A density-based algorithm for discovering clusters in large spatial databases with noise." Proceedings of the Second International Conference on Knowledge Discovery and Data Mining, 226-231, 1996. 
+\bibitem{kalman}
+R.E.~Kalman, J.~Bas.~Eng.~{\bf 82D}, 35 (1960);
+R.E.~Kalman and R.S.~Bucy, J.~Bas.~Eng.~{\bf 83D}, 95 (1961);
 \bibitem{ROOT} http://root.cern.ch/drupal/
-
-\bibitem{designpatterns} Gemma et al., ``Design Patterns,'' Addison-Wesley Longman, Inc., 1995. 
 \bibitem{gian} Petrillo, Gianluca, 2014. "LArSoft: simulation and reconstruction for Liquid Argon TPC," Liquid Argon TPC R\&D Workshop, Fermilab.
 \bibitem{git-flow} http://nvie.com/posts/a-successful-git-branching-model/
 \bibitem{git-control} https://cdcvs.fnal.gov/redmine/projects/larsoft/wiki/\_The\_developer\_environment\_
@@ -810,14 +842,7 @@ NEED WORDS.
 \bibitem{valgrind} http://valgrind.org/
 \bibitem{gperf} https://code.google.com/p/gperftools/
 \bibitem{allinea} http://www.allinea.com/
-\bibitem{nest} http://nest.physics.ucdavis.edu/site/
 \bibitem{art-guide} https://cdcvs.fnal.gov/redmine/projects/art/wiki/Data\_Product\_Design\_Guide
-\bibitem{flame} L. Fu et al. "FLAME, A Novel Fuzzy Clustering Method for the Analysis of DNA Microarray Data." BMC Bioinformatics, 8:3, 2007.
-\bibitem{ppht} J. Matas et al. "Robust Detection of Lines Using the Progressive Probabilistic Hough Transform." COMPUT VIS IMAGE UND, 78:1, 1999.
-\bibitem{dbscan} E. Martin et al. "A density-based algorithm for discovering clusters in large spatial databases with noise." Proceedings of the Second International Conference on Knowledge Discovery and Data Mining, 226-231, 1996. 
-\bibitem{kalman}
-R.E.~Kalman, J.~Bas.~Eng.~{\bf 82D}, 35 (1960);
-R.E.~Kalman and R.S.~Bucy, J.~Bas.~Eng.~{\bf 83D}, 95 (1961);
 
 \end{thebibliography}
 \clearpage 
