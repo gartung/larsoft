@@ -23,7 +23,7 @@
 \oddsidemargin=0.125in
 \evensidemargin=0.125in
 
-%\addtolength{\textwidth}{1.2in}
+%\addtolength{\textwidth}\larsoft{1.2in}
 %\addtolength{\topmargin}{-.7in}
 %\addtolength{\leftmargin}{-1.1in}
 %\addtolength{\footskip}{-1.5cm}
@@ -34,12 +34,12 @@
 %%\pagestyle{headings}
 %\setlength{\oddsidemargin}{0.in}
 %\setlength{\evensidemargin}{0.in}
-%\renewcommand{\thepage}{Eric D. Church/page \arabic{page}}
+\newcommand{\larsoft}{LArSoft }
 \thispagestyle{empty}
 
 \pagestyle{myheadings}
 \begin{document}
-\title{The Liquid Argon Offline Software Package: LArSoft} 
+\title{The Liquid Argon Offline Software Package: \larsoft} 
 \author{Jonathan Asaadi}
 \address{}
 \ead{jaasaadi@syr.edu}
@@ -50,7 +50,7 @@
 \address{}
 \ead{bcarls@fnal.gov}
 \author{Eric Church}
-\address{Fermi National Accelerator Lab, Batavia, IL, USA, 60510-5011}
+\address{Physics Department, Yale University, New Haven, CT, USA, 12345-1234}
 \ead{echurch@fnal.gov}
 \author{Bonnie Fleming}
 \address{Physics Department, Yale University, New Haven, CT, USA, 12345-1234}
@@ -119,16 +119,16 @@ A common software package for the simulation, reconstruction, and analysis of Li
 \hyphenation{Particle-List-Action}
 \hyphenation{created responses assumed respon-sible language}
 \section{Introduction}
-\subsection{What is LArSoft}
-LArSoft is a software package for the simulation, reconstruction, and analysis of all planned and running liquid argon experiments at Fermilab. Any Liquid Argon Time Projection Chamber (LArTPC) experiment can make use of LArSoft algorithms as long as the experiment supplies a properly formatted description of its detector geometry and electronics. 
+\subsection{What is \larsoft}
+\larsoft is a software package for the simulation, reconstruction, and analysis of all planned and running liquid argon experiments at Fermilab. Any Liquid Argon Time Projection Chamber (LArTPC) experiment can make use of \larsoft algorithms as long as the experiment supplies a properly formatted description of its detector geometry and electronics. 
 
-LArSoft  benefits from the experience of multiple experiments.  Each LArTPC provides essentially the same basic information after accounting for small detector differences.  Thus, algorithms developed for one experiment can be directly used by another, as long as the differences in geometry are properly accounted for in the algorithms.  
+\larsoft  benefits from the experience of multiple experiments.  Each LArTPC provides essentially the same basic information after accounting for small detector differences.  Thus, algorithms developed for one experiment can be directly used by another, as long as the differences in geometry are properly accounted for in the algorithms.  
 
 A liquid argon detector and a sophisticated software toolkit can analyze event topologies typical of neutrino interactions that are difficult to parse and make sense of in traditional legacy technologies. Figure~(ADD bubble chamber and Liquid Argon results picture)
-Liquid argon detectors see every nuance of the event. LArSoft applies reconstruction algorithms to identify clusters of energy deposit, tracks, particle showers, and interaction vertices.
+Liquid argon detectors see every nuance of the event. \larsoft applies reconstruction algorithms to identify clusters of energy deposit, tracks, particle showers, and interaction vertices.
 
-\subsection{Who Uses LArSoft}
-LArSoft is the product of the collaboration between the following experiments and Fermilab.
+\subsection{Who Uses \larsoft}
+\larsoft is the product of the collaboration between the following experiments and Fermilab.
 \begin{enumerate}
 \item ArgoNeuT
 \item LArIAT
@@ -147,20 +147,20 @@ LArSoft is the product of the collaboration between the following experiments an
 
 \section{Framework and Tools}
 \subsection{ART}
-The foundation of LArSoft is the ART event processing framework which coordinates event processing via configurable, pluggable modules that add data to, and retrieve data from, events.~\cite{art-ref}  An event is one unit of data. It may represent an interaction or any period of collected data.
+The foundation of \larsoft is the ART event processing framework which coordinates event processing via configurable, pluggable modules that add data to, and retrieve data from, events.~\cite{art-ref}  An event is one unit of data. It may represent an interaction or any period of collected data.
 
-ART provides many of the services necessary to operate in a production environment, including tools for compiling, installing, packaging, and deploying the system.  ART is developed and supported by the Fermilab Scientific Computing Division (SCD) and is used by experiments within the neutrino, astrophysics, and muon programs, including NOvA, Muon G-2, Mu2e, and DarkSide-50, and alongside LArSoft for MicroBooNE, ArgoNeuT, and Lariat.
+ART provides many of the services necessary to operate in a production environment, including tools for compiling, installing, packaging, and deploying the system.  ART is developed and supported by the Fermilab Scientific Computing Division (SCD) and is used by experiments within the neutrino, astrophysics, and muon programs, including NOvA, Muon G-2, Mu2e, and DarkSide-50, and alongside \larsoft for MicroBooNE, ArgoNeuT, and Lariat.
 
 \subsection{External Packages}
 \subsubsection{Event Generation}
-LArSoft makes use of the NuSoft packages that provide a common interface to event generators, Geant4 and event display libraries developed for use by all neutrino experiments. The packages used include: EventDisplayBase, EventGeneratorBase, G4Base, MagneticField, NuReweight and SimulationBase.
+\larsoft makes use of the NuSoft packages that provide a common interface to event generators, Geant4 and event display libraries developed for use by all neutrino experiments. The packages used include: EventDisplayBase, EventGeneratorBase, G4Base, MagneticField, NuReweight and SimulationBase.
 
-There are several different ways to create events for LArSoft:
+There are several different ways to create events for \larsoft:
 \begin{enumerate}
 \item{CRY - a third-party package to simulate cosmic rays~\cite{cry}}
-\item{External neutrino interaction generators used to produce neutrinos in the Monte Carlo simulation. There are several generators which can supply input to LArSoft:}
+\item{External neutrino interaction generators used to produce neutrinos in the Monte Carlo simulation. There are several generators which can supply input to \larsoft:}
 \begin{enumerate}
-\item{GENIE~\cite{genie} - the standard neutrino event generator in LArSoft}
+\item{GENIE~\cite{genie} - the standard neutrino event generator in \larsoft}
 \item{NuWro~\cite{nuwro} - a neutrino event generator with potentially improved spectral functions for liquid argon}
 \item{GIBUU~\cite{gibuu} - a theory-code framework that was mainly developed for different classes of reactions other than neutrinos}
 \item{NUANCE~\cite{nuance} - an older neutrino event generator used in MiniBooNE; it is available to compare the results of MiniBooNE and MicroBooNE simulations}
@@ -175,12 +175,12 @@ NEED WORDS
 
 \subsection{Geometry Description Requirements}
 \label{sec-geom-desc}
-LArSoft uses the Geometry Description Markup Language (GDML) which is an application-independent geometry description format based on Extensible Markup Language (XML.) 
+\larsoft uses the Geometry Description Markup Language (GDML) which is an application-independent geometry description format based on Extensible Markup Language (XML.) 
 The Geometry package contains a general interface into the detector descriptions of the different experiments so other packages do not depend on the detector. 
 
 \begin{figure}[h]
 \center
-\caption{LArSoft requires a descending volume hierarchy of volWorld, volDetEnclosure, volCryostat, volTPC, volTPCPlane, volTPCWire to search for each of these specific volumes. There can be, and probably should be, multiple TPCPlanes and TPCWires.}
+\caption{\larsoft requires a descending volume hierarchy of volWorld, volDetEnclosure, volCryostat, volTPC, volTPCPlane, volTPCWire to search for each of these specific volumes. There can be, and probably should be, multiple TPCPlanes and TPCWires.}
 \includegraphics[width=4.0in]{./imgs/geometry_volumes.png}
 \label{geo-vol.img}
 \end{figure}
@@ -194,9 +194,9 @@ The TPC volume contains many TPCPlaneXXX volumes that describe the wire planes. 
 
 \subsection{Data Product Description}
 
-LArSoft simulation jobs use the ART framework tools to manage job configuration, module scheduling and execution, error handling, and input/output. LArSoft simulation job modules perform the steps required for simulation. They communicate data from one job to the next via the event record in memory. The structure of the data within the event record is given by predefined data products, which are implemented as objects with C++ class definitions. If the data products required by downstream modules are saved in the output file of the upstream jobs, the steps required by simulation can be performed in separate jobs.
+\larsoft simulation jobs use the ART framework tools to manage job configuration, module scheduling and execution, error handling, and input/output. \larsoft simulation job modules perform the steps required for simulation. They communicate data from one job to the next via the event record in memory. The structure of the data within the event record is given by predefined data products, which are implemented as objects with C++ class definitions. If the data products required by downstream modules are saved in the output file of the upstream jobs, the steps required by simulation can be performed in separate jobs.
 
-LArSoft-specific data products include:
+\larsoft-specific data products include:
 \begin{itemize}
 
 \item{the MCParticle which stores, per particle, a unique integer to index the particle in the list,}
@@ -269,7 +269,7 @@ data product schema evolution features.
 The truth particles generated in the event generator step are passed to a Geant4 
 based detector simulation called LArG4.  The geometry GDML file 
 described in section~\ref{sec-geom-desc} is parsed to create a Geant4 detector description using
-Geant4's GDML parser, which interfaces to LArSoft via the DetectorConstruction LArSoft class.
+Geant4's GDML parser, which interfaces to \larsoft via the DetectorConstruction \larsoft class.
 The following sections describe some features that distinguish
 LArG4 from standard Geant4 simulations.
 
@@ -281,7 +281,7 @@ are called at the beginning and end of each event, track, and step to
 record information related to the secondary particles created during
 the detector simulation. These hooks are organized in the class
 UserAction, which is part of the nutools package external to
-LArSoft. UserAction uses a variant of the Abstract Factory design
+\larsoft. UserAction uses a variant of the Abstract Factory design
 pattern~\cite{designpatterns} to simplify the handling of multiple
 simulation tasks, each of which might require access to Geant4's user
 hooks.
@@ -344,7 +344,7 @@ there are a number of exceptions or enhancements:
 \subsubsection{More User Actions}
 \label{susubsec:trackstackingandeventbiasing}
 
-The statistical errors on rare event studies in LArSoft can be improved via track stacking and event biasing.
+The statistical errors on rare event studies in \larsoft can be improved via track stacking and event biasing.
 
 The priority of Geant4 tracking within a simulation defaults to stepping through certain tracks
 until their final fates are determined. This is done 
@@ -359,7 +359,7 @@ track any daughters of interest from this interaction and abandon or at least de
 If the tracking is delayed, Geant4 will return to it later in the event or in a subsequent event. If the muon is very far from the active detector after some amount of tracking, the tracking can be stopped or the event killed. This saves valuable processing time since it provides movement
 immediately onto the next candidate event that might give activity in the detector.
 
-Track stacking is done in LArSoft by defining an optional post-step class 
+Track stacking is done in \larsoft by defining an optional post-step class 
 called LArStackingAction that derives from UserStackingAction. It is instantiated and used upon proper setting of the desired 
 FHICL job flag. In addition to the ParticleListAction 
 described in Section~\ref{sec:useractions}, LArStackingAction is called at each step.
@@ -376,8 +376,8 @@ probability than their naturally-dictated rate by artificially increasing their 
 aided by two related strategies to produce the interaction of interest in the detector
 with higher probability than occurs naturally. It is also possible to generate multiple outgoing daughters rather than whatever the low natural
 number may be. This requires careful tracking of the weights of any new 
-particles introduced. This is done in LArSoft by writing physics classes which are processes obeyed by particular particles derived from the G4WrapperProcess. Secondaries are generated 
-and weights are calculated for all the G4Particles. These are preserved and passed down all the way to LArSoft's MCParticles.
+particles introduced. This is done in \larsoft by writing physics classes which are processes obeyed by particular particles derived from the G4WrapperProcess. Secondaries are generated 
+and weights are calculated for all the G4Particles. These are preserved and passed down all the way to \larsoft's MCParticles.
 
 Without a combination of track stacking and event biasing, statistical errors on rare event studies would dominate due to the few events of interest that may result even after large batch submissions.
 
@@ -463,14 +463,14 @@ Other types of detectors may be placed outside of the cryostat volume.
 For example, scintillator paddles or Cherenkov detectors could be used to learn more about an interaction happening in the cryostat.
 Scintillator paddles could be used to veto cosmic ray activity or hadronic showers coming from a neutrino beam interacting with material upstream of the detector enclosure.
 Cherenkov detectors could be used to measure the velocity of incoming particles from a test beam used for studying liquid argon TPC responses.
-A new object was created in LArSoft to allow users to store general information from detectors not related with the TPC, or auxiliary detectors.
+A new object was created in \larsoft to allow users to store general information from detectors not related with the TPC, or auxiliary detectors.
 
-For each Geant4 track passing the auxiliary detector volume, the LArSoft object AuxDetSimChannel holds its entering and exiting position, momentum, energy deposited, and LArSoft track ID.
+For each Geant4 track passing the auxiliary detector volume, the \larsoft object AuxDetSimChannel holds its entering and exiting position, momentum, energy deposited, and \larsoft track ID.
 That information is saved for each auxiliary detector in the output root file.
 This data object allows the use of the Geant4 track ID to trace back the genesis of a particle crossing the detector, enabling simulation studies and efficiency studies of external auxiliary detectors.
 
 To add new auxiliary detectors, the user needs to define the detector in the experiment's GDML file.
-LArSoft has a facility to identify those volumes to enable Geant4 to treat them as an active detector.
+\larsoft has a facility to identify those volumes to enable Geant4 to treat them as an active detector.
 As Geant4 encounters a new Geant4 track ID within the active detector, the AuxDetSimChannel data object stores each entry position and entry momentum.
 While Geant4 steps through to the next time slice, each particle's exit position and exit momentum is updated, and the running sum of energy deposited is updated. 
 After the Geant4 steps are exhausted for this detector, the AuxDetSimChannel object has collected all of the simulation data needed for further analysis.
@@ -481,7 +481,7 @@ After the Geant4 steps are exhausted for this detector, the AuxDetSimChannel obj
 NEED WORDS
 
 \subsection{Incorporating Magnetic Fields}
-LArSoft provides limited support for simulating magnetic
+\larsoft provides limited support for simulating magnetic
 fields. A constant and uniform field may be specified
 throughout any single volume (and it's sub-volumes) of the Geant
 geometry, and will be respected by Geant's particle tracking
@@ -490,43 +490,43 @@ drift directions, nor any explicit support for analyzing events
 in the presence of a non-zero magnetic field although both of these features are planned.
 
 \subsection{Optical Simulation}
-Optical physics simulations in LArSoft can take one of two forms: full or fast simulation.  Both optical simulations are implemented within LArSoft's Geant4 based simulation package and make use of its configurable physics list functionality.  This functionality allows LArSoft simulations to define a custom Geant4 physics list from a set of physics constructors at runtime, and is used to select between full optical, fast optical or no optical simulation. 
+Optical physics simulations in \larsoft can take one of two forms: full or fast simulation.  Both optical simulations are implemented within \larsoft's Geant4 based simulation package and make use of its configurable physics list functionality.  This functionality allows \larsoft simulations to define a custom Geant4 physics list from a set of physics constructors at runtime, and is used to select between full optical, fast optical or no optical simulation. 
 
 \subsubsection{Full Optical Simulation}
 The full simulation involves stepping individual photons through the detector volume.  Each stepping photon is treated as an individual particle in Geant4.  The number of photons stepped is usually reduced by a constant factor representing the optical detector collection efficiency at 128 $nm$, thereby scaling the photon count at production rather than detection to reduce computation time and memory usage. 
 
-The physics constructor for full optical physics in LArSoft has been adapted from the standard Geant4 optical physics constructor. Default implementations for scintillation and Cerenkov production, Rayleigh scattering, and absorption at boundaries and in the bulk are included. The default implementation of wavelength shifting physics processes is also included, although at present most LArSoft experiments incorporate this into the estimate of the optical detector collection efficiency rather than simulating it at the photon-by-photon level.  A customized, faster reflectivity model is implemented, whereby material boundaries have specified diffuse and specular reflectances for each material boundary type.  
+The physics constructor for full optical physics in \larsoft has been adapted from the standard Geant4 optical physics constructor. Default implementations for scintillation and Cerenkov production, Rayleigh scattering, and absorption at boundaries and in the bulk are included. The default implementation of wavelength shifting physics processes is also included, although at present most \larsoft experiments incorporate this into the estimate of the optical detector collection efficiency rather than simulating it at the photon-by-photon level.  A customized, faster reflectivity model is implemented, whereby material boundaries have specified diffuse and specular reflectances for each material boundary type.  
 
-The liquid argon volume's optical characteristics are loaded into LArSoft by a dedicated service, and are globally accessible within the LArSoft framework.  Reconstruction and simulation algorithms can access important optical properties.
+The liquid argon volume's optical characteristics are loaded into \larsoft by a dedicated service, and are globally accessible within the \larsoft framework.  Reconstruction and simulation algorithms can access important optical properties.
 
 Scintillation production is configured with a photon momentum spectrum centered at 9.7 $eV$ and a shape which is taken from~\cite{spectrum}.  Singlet and triplet scintillation components are included, with time constants of 6 and 1500 $ns$, although tensions within the literature suggests these values will require finer tuning.\cite{fastslow}\cite{fastslow2}\cite{fastslow3}\cite{fastslow4}
-Data from LArSoft experiments will be used to adjust these values.  The scintillation yield is defined per incident particle type using an extension of the relationship shown in~\cite{scintyield}, and the absolute yield for a minimum ionizing particle is set to 24,000 photons per million $eV$, assuming a constant electric field strength of 500 $V/cm$. 
+Data from \larsoft experiments will be used to adjust these values.  The scintillation yield is defined per incident particle type using an extension of the relationship shown in~\cite{scintyield}, and the absolute yield for a minimum ionizing particle is set to 24,000 photons per million $eV$, assuming a constant electric field strength of 500 $V/cm$. 
 
 Cerenkov photons are produced with yields and energies corresponding to the standard Frank-Tamm spectrum of Cerenkov radiation, given a continuous parameterization of the liquid argon refractive index derived from the references in~\cite{RIndex}. Rayleigh scattering and photon-absorption process are enabled, where the scattering length is specified over the range of photon energies from 1.8 $eV$ to 10.8 $eV$, and is 90 $cm$ at the peak of the argon scintillation spectrum~\cite{Rlength}.  The bulk absorption length is set to 2000 $m$ (approximately infinite). Further work to parameterize purity dependent absorption effects may be required, with absorption due to dissolved nitrogen being the most likely additional effect~\cite{nitrogen}.
 
 \label{sec:fullopticalsim}
-The full simulation involves stepping every optical photon individually through the detector volume.  Typical photon yields for an event cause this to be a computationally intensive procedure. The physics constructor has been specially adapted for LArSoft and includes scintillation and Cerenkov production, Rayleigh scattering, reflections at boundaries, absorption at boundaries and in the bulk, and wavelength shifting physics processes.
+The full simulation involves stepping every optical photon individually through the detector volume.  Typical photon yields for an event cause this to be a computationally intensive procedure. The physics constructor has been specially adapted for \larsoft and includes scintillation and Cerenkov production, Rayleigh scattering, reflections at boundaries, absorption at boundaries and in the bulk, and wavelength shifting physics processes.
 
 A simplified reflectivity model is used, whereby each type of boundary in the detector is supplied with a wavelength-dependent total reflectivity and specular/diffuse reflection fraction.   For  preliminary  studies,  only the  steel/argon boundaries  at  the  edge of the cryostat are  reflective. All  other  surfaces,  including  wires,  field cage,  etc,  are opaque.  The steel/argon boundaries have a total reflectance of 25\%, of which 50\% is specular~\cite{reflectances}.
 
 \begin{figure}[h]
 \centering
-\caption{Illustration of the simple treatment of wireplane absorption in LArSoft}
+\caption{Illustration of the simple treatment of wireplane absorption in \larsoft}
 \includegraphics[width=6.0in]{./mtrls/imgs/WireplaneTransmissionCartoon.pdf}
 \label{fig:wireplaneabs}
 \end{figure}
 
-For a given surface, any angularly dependent transmission spectrum can be incorporated, including semi-transparent surfaces.  Non-uniform angular dependence of photon transmission can be modeled through the detector wireplanes.    LArSoft derived classes implement optical attenuation by one or many planes of cylindrical wires which are assumed black to 128 $nm$ light. A cartoon of the wireplane opacity model is shown in figure~\ref{fig:wireplaneabs}.
+For a given surface, any angularly dependent transmission spectrum can be incorporated, including semi-transparent surfaces.  Non-uniform angular dependence of photon transmission can be modeled through the detector wireplanes.    \larsoft derived classes implement optical attenuation by one or many planes of cylindrical wires which are assumed black to 128 $nm$ light. A cartoon of the wireplane opacity model is shown in figure~\ref{fig:wireplaneabs}.
 
-Photons are counted at detector volumes whose name matches a string supplied to the LArSoft geometry service.  This volume may represent a photomultiplier tube, or another element defined as optically sensitive, for example, a wavelength shifting surface. At geometry construction time, the volumes matching the appropriate name string in the GDML file are assigned optical detector IDs and become sensitive within the LArSoft simulation.
+Photons are counted at detector volumes whose name matches a string supplied to the \larsoft geometry service.  This volume may represent a photomultiplier tube, or another element defined as optically sensitive, for example, a wavelength shifting surface. At geometry construction time, the volumes matching the appropriate name string in the GDML file are assigned optical detector IDs and become sensitive within the \larsoft simulation.
 
-Three parallel world geometries are used in LArSoft as shown in figure \ref{fig:parallelgeom}.
+Three parallel world geometries are used in \larsoft as shown in figure \ref{fig:parallelgeom}.
 The sensitive elements are placed in a separate Geant4 parallel world geometry.  Only photons are tracked in this geometry, ensuring the optical  detection process is triggered only for optical photons.  Photon step size is not limited by the TPC voxel size, which provides a significant performance improvement. Upon photon detection, tracking of the photon is stopped. Information about the photon's arrival time and detection location are stored in a detected photon table.  At the end of the run, this table is queried to generate simulated photon data products to store in the event.  The same table is filled by the fast simulation method, and hybrid fast and full simulations can be run.  One use case for such a hybrid simulation would be the fast simulation of scintillation photons. Full simulation is required for Cerenkov photons, which have a directionality and so cannot be consistently treated by the fast simulation.
 
 
 \begin{figure}[h]
 \centering
-\caption{A cartoon which illustrates the three parallel simulation geometries used in the LArSoft
+\caption{A cartoon which illustrates the three parallel simulation geometries used in the \larsoft
 Geant4 implementation.}
 \includegraphics[width=6.0in]{./mtrls/imgs/ParallelGeomScheme.pdf}
 \label{fig:parallelgeom}
@@ -540,13 +540,13 @@ The liquid argon volume of the detector is coarse-grained into optical voxels, t
 
 A dedicated run of the full optical simulation can be made to create a lookup table which contains the visibility of each voxel to each optical detector.  This run creates a specified number of isotropic 128 $nm$ photons, uniformly distributed across each voxel volume at time t=0.  These photons propagate and are detected using the same mechanics as the full photon simulation.  After photon propagation, the number of detected photons at each optical detector is used to build the optical visibility lookup table.  This process is automated by a dedicated photon visibility service, which communicates with the event generation, simulation and analysis parts of the simulation chain to ensure they are correctly configured.
 
-Once the visibility table has been generated, the probability that a given 128 $nm$ photon will reach a specified optical detector can be quickly assessed using the photon visibility service which is available to both simulation and reconstruction modules.  The LArSoft Geant4 simulation can be configured to include the fast optical physics constructor which implements the lookup-based fast scintillation process within simulations. The generation parameters for scintillation light in the fast scintillation process are equivalent to those used in the full simulation.  However, instead of placing optical photons onto the Geant4 particle stack, detected optical photons are inserted directly into the detected photon table probabilistically, based on the visibility of the detector location where the scintillation occurred.  The arrival times of the photons are also smeared based on the distribution of production times.  The sum of detected photons from each voxel where scintillation emission occured gives the total optical detector response.
+Once the visibility table has been generated, the probability that a given 128 $nm$ photon will reach a specified optical detector can be quickly assessed using the photon visibility service which is available to both simulation and reconstruction modules.  The \larsoft Geant4 simulation can be configured to include the fast optical physics constructor which implements the lookup-based fast scintillation process within simulations. The generation parameters for scintillation light in the fast scintillation process are equivalent to those used in the full simulation.  However, instead of placing optical photons onto the Geant4 particle stack, detected optical photons are inserted directly into the detected photon table probabilistically, based on the visibility of the detector location where the scintillation occurred.  The arrival times of the photons are also smeared based on the distribution of production times.  The sum of detected photons from each voxel where scintillation emission occured gives the total optical detector response.
 
 The photon library is both geometry and voxelization scheme specific, and changes to either require a full regeneration, which is a computationally intensive job.  The effects of Rayleigh scattering and absorption are also built into the visibility table.  Changes to the argon scintillation production properties and optical detector efficiencies can be made without regenerating the table.
 
 \subsubsection{Tools for Optical Simulations}
 
-There are several tools in LArSoft used for optical simulation validation and basic analysis.  The photon counter module produces analysis trees and histograms representing the properties of the detected photons in each optical detector.  The module extracts per-optical-detector and per-event information for both full and fast simulation outputs.  It is also used to generate the optical visibility library used by the LArSoft fast simulation.
+There are several tools in \larsoft used for optical simulation validation and basic analysis.  The photon counter module produces analysis trees and histograms representing the properties of the detected photons in each optical detector.  The module extracts per-optical-detector and per-event information for both full and fast simulation outputs.  It is also used to generate the optical visibility library used by the \larsoft fast simulation.
 
 \begin{figure}[h]
 \centering
@@ -563,31 +563,16 @@ A library analyzer module produces detector visibility maps and other histograms
 
 
 \section{Reconstruction Mechanics}
+
+The \larsoft reconstruction is highly flexible due to the design principal it employs of requiring all algorithmic steps of the reconstruction to be encapsulated into individual objects.  Those objects can in turn be called in a variety of combinations that allow a user to move from basic raw data to very high level reconstruction.  These algorithm objects are consolidated into modules that are called by the framework to produce the desired data products.  The modules can perform a single step of the reconstruction or multiple steps, but are all required to produce data products that need no further processing to be handed off to another reconstruction stage or an analysis stage.  As a result of this feature, the user has a high degree of discretion to design a reconstruction path that seems appropriate for the desired application.  For example, one user may choose to build up a set of two dimensional reconstructions to combine into a three dimensional one, while another user may opt to attempt a three dimensional reconstruction directly from the energy depositions of the raw data.  
+
 \subsection{Data Product Description}
-The reconstruction chain proceeds in the following steps
-\begin{enumerate}
-\item First, the raw energy depositions (digits) are calibrated into signals on wires.
-\item Next, hits are formed from the regions containing wire signals that are above a tunable threshold.
-\item Hits are then grouped into clusters.
-\item Clusters are classified to be projections from either 3D tracks or showers. Tracks and showers inherit from the class prong, in the usual C++ sense.
-\item Vertices are located using prongs that are shown to originate from a common point.
-\item Finally, prongs and vertices are associated into events.
-\end{enumerate}
-The LArSoft reconstruction chain is complete in that initial algorithms for each step currently exist.  More effort will be required to demonstrate that every, or at least most of the desired, event topologies can be handled in an automated way in the reconstruction chain. Detailed studies of various event classes are in progress to understand the performance of each reconstruction algorithm.
 
-The reconstruction algorithms in LArSoft have benefited from several advances in image analysis techniques developed over the past decade.  For example, the algorithm used to cluster groups of energy depositions together is directly taken from the heavily-cited work of Ester, Kriegel, Sander, and Xu's Density Based Spatial Clustering of Applications with Noise (DBSCAN)~\cite{ester} . The two-dimensional (2D) vertex, or more accurately line-endpoint, finding algorithms are based on a corner finding technique used for locating edges and corners in photographic images.  Initial particle tracking is performed using Hough line finding techniques.
+The \larsoft data products for reconstruction are designed to provide descriptions for the various stages of and approaches to the reconstruction.  The data products describe both two dimensional concepts, such as which energy depositions are closely correlated in both time and space, as well as complicated three dimensional concepts such as which particle tracks and showers should be combined to describe a single particle interaction in the detector.
 
-\hspace*{2cm}
-\begin{figure}[h]
-\centering
-\caption{This flow chart shows the objects created along a possible reconstruction chain in LArSoft.}
-\includegraphics[width=4.0in]{./imgs/LArSoft-Recon-Flow-Soderberg.png}
-\label{flow}
-\end{figure}
+The \larsoft data products that describe two dimensional concepts are the Wire, Hit, Cluster, and EndPoint2D.  The Wire describes all information from a single calibrated channel of the detector.  It is intended to be an intermediary between the raw signal of the RawDigit object and the rest of the reconstruction.  The user may choose to save the Wire objects to the resultant output file of a reconstruction task, but that is not required.  The Hit encapsulates the concept of a single energy deposition on a single channel in the detector and contains information about the electronics channel recording the hit as well as the magnitude of the deposition.  The Cluster is the association of all Hits that are correlated with each other in space and time.  The EndPoint2D represents an end of a line-like cluster or the start of a diffuse, shower-like cluster.
 
-ADD picture -- Another reconstruction chain in LArSoft
-
-Reconstruction in LArSoft has both 2D and 3D portions. The reconstruction does not have to proceed by building 2D information before creating 3D information, but the option to do so exists. 
+The data products that describe three dimensional concepts are the SpacePoint, Seed, Track, Shower, Vertex, Event, and PFParticle.  
 
 \subsection{Organization of Algorithms}
 
@@ -596,9 +581,9 @@ What is an algorithm? How do they relate to modules?
 \subsection{Implementation Plan for Algorithms and Modules}
 NEED WORDS.
 
-\subsection{Unique aspects of LArSoft Reconstruction}
+\subsection{Unique aspects of \larsoft Reconstruction}
 
-\subsection{One Example Reconstruction Chain in LArSoft}
+\subsection{One Example Reconstruction Chain in \larsoft}
 The reconstruction chain used by the MicroBoone experiment to reconstruct cosmic and neutrino interactions is described as follows. A LArTPC typically saves raw data in the format of ADC counts as a function of TPC ticks for each wire. The signal can have a unipolar shape if it is on a collection wire or a bipolar shape if it is on an unshielded collection wire. The first step in the reconstruction is to convert the raw signal from each wire to a standard shape such as a Gaussian shape. This is achieved by passing the raw data through a calibrated deconvolution algorithm, which filters noise and corrects for the electronics response and the effect of the drift field response to produce the best estimates of the drift charge and time. 
 
 [Gaussian Hit Finder - Jonathan]
@@ -629,7 +614,7 @@ The track reconstruction problem in a liquid argon TPC can be
 divided into several stages, including pattern recognition
 (identifying hits that belong to a track), trajectory reconstruction,
 and track parameter estimation. Although in principle tracks can be two or
-three-dimensional objects, Larsoft uses only three-dimensional
+three-dimensional objects, \larsoft uses only three-dimensional
 tracks.
 
 Hits are the input data for track reconstruction.  Hits
@@ -647,7 +632,7 @@ measurements that are hits or space points, especially in cases where the
 number of measurements is much larger than the five parameters
 needed to specify a track on a surface.  The Kalman
 filter can be used for both pattern recognition and parameter
-estimation.  Furthermore, the Kalman filter in LArSoft can use either hits or
+estimation.  Furthermore, the Kalman filter in \larsoft can use either hits or
 space points as input.
 
 The following is a description of the basic Kalman filter algorithm.
@@ -672,11 +657,11 @@ track or rejected.
 
 The skeleton Kalman filter requires qualifications and caveats in real cases. The remainder of this
 section describes some of the qualifications that apply to the
-hit-based Kalman filter in LArSoft.
+hit-based Kalman filter in \larsoft.
 
 The Kalman
 filter algorithm is not self-starting. That is, an initial estimate
-of the track parameters is required even for the first time.  In the LArSoft hit-based Kalman filter, the initial
+of the track parameters is required even for the first time.  In the \larsoft hit-based Kalman filter, the initial
 estimate of track parameters is provided
 by a separate seed-track finder. Seed tracks are
 collections of hits from all views that are reconstructed to form a
@@ -706,7 +691,7 @@ function is used.
 The measurement surfaces in liquid argon TPCs are intersecting, which means there is no
 predetermined order in which the measurement surfaces should be
 visited.  To prevent back-and-forth tracking, which would overestimate
-propagation noise, such as multiple Coulomb scattering, the LArSoft
+propagation noise, such as multiple Coulomb scattering, the \larsoft
 hit Kalman filter chooses the measurement surfaces associated with one
 view as primary, and visits these surfaces in their natural
 predetermined order.  Hits from views other than the primary view are
@@ -716,8 +701,8 @@ function.  This measurement propagation is always done using a linear
 approximation as is the measurement function, and is done without
 propagation noise.
 
-The LArSoft hit-based Kalman filter
-does not use a branching track model. Hit selection (step two) for the LArSoft hit-based Kalman filter is
+The \larsoft hit-based Kalman filter
+does not use a branching track model. Hit selection (step two) for the \larsoft hit-based Kalman filter is
 implemented such that at each measurement surface, the filter accepts
 either zero or one hit. If the Kalman filter accepts a wrong hit, the
 track may follow the wrong road (e.g. a delta ray), or the track may
@@ -738,7 +723,7 @@ The electromagnetic shower reconstruction code happens in two steps. The first i
 [Optical - Wes]
 
 \subsection{Event Visualization}
-An important part of the LArSoft suite is the ability to visually display events. The basic event display is constructed based on ROOT GUI libraries~\cite{ROOT}.
+An important part of the \larsoft suite is the ability to visually display events. The basic event display is constructed based on ROOT GUI libraries~\cite{ROOT}.
 It can be used to display both data and MC events at any stage of their reconstruction, the latter with the corresponding MC truth information. 
 Navigation between events is either by inserting the desired run and event number in the corresponding fields or by means of the next and previous buttons.
 
@@ -748,7 +733,7 @@ All of the above pads have zoom capability. The user can choose what reconstruct
 
 The event display has additional windows that allow different visualization of some of the reconstruction objects. These include the 3D event display, as shown in figure~\ref{2d_event} where the 3D Track objects can be viewed in a 3D depiction of the detector, a set of 2D projection views where the tracks are shown in the X-Z and Y-Z plane instead of the wire-time views, and a Calorimetry view where the track and Shower dE/dx depositions are plotted against MC predictions allowing visual particle identification. 
 
-Since the event display is a LArSoft module, it can be run in sequence with other modules. It is possible to change the FHICL parameters of other modules running in the same job via a menu window. Using this capability and seeing the results of these changes in the event displays is a useful debugging tool in algorithm development.
+Since the event display is a \larsoft module, it can be run in sequence with other modules. It is possible to change the FHICL parameters of other modules running in the same job via a menu window. Using this capability and seeing the results of these changes in the event displays is a useful debugging tool in algorithm development.
 
 
 \hspace*{2cm}
@@ -771,32 +756,32 @@ NEED WORDS.
 \subsection{Implementation Plan}
 NEED WORDS.
 
-\subsection{Unique Analysis Aspects of LArSoft}
+\subsection{Unique Analysis Aspects of \larsoft}
 NEED WORDS.
 
 \section{Getting Software and Benchmarking it}
 \subsection{Ways to Contribute}
 
-LArSoft general software is hosted in ten Git repositories with additional experiment-specific repositories for other source, for example digitization code and configuration files. MultiRepository Build (MRB) compiles code across Git repositories. Each repository has a test area, a documentation area, and libraries such as EventGenerator, LArG4, HitFinder, VertexFinder, etc.~\cite{gian}
+\larsoft general software is hosted in ten Git repositories with additional experiment-specific repositories for other source, for example digitization code and configuration files. MultiRepository Build (MRB) compiles code across Git repositories. Each repository has a test area, a documentation area, and libraries such as EventGenerator, LArG4, HitFinder, VertexFinder, etc.~\cite{gian}
 
-To avoid having one developer's code negatively impact other software and to allow for vetting before others use the new software, no development takes place directly on the develop branch of the repository. LArSoft uses the git-flow~\cite{git-flow} model which makes it easy for users to have a private version of the software they are working on. This model allows the user to manage different tasks at the same time, each in its own independent branch, developing and testing code while sharing it with other users.~\cite{git-control} All LArSoft developers are expected to follow this workflow model to maintain the integrity of the develop branch.
+To avoid having one developer's code negatively impact other software and to allow for vetting before others use the new software, no development takes place directly on the develop branch of the repository. \larsoft uses the git-flow~\cite{git-flow} model which makes it easy for users to have a private version of the software they are working on. This model allows the user to manage different tasks at the same time, each in its own independent branch, developing and testing code while sharing it with other users.~\cite{git-control} All \larsoft developers are expected to follow this workflow model to maintain the integrity of the develop branch.
 
-A group of people, the librarians, vet the code going into all releases. The librarians may examine the changes made to the software in detail as well as looking at the bigger picture to ensure the software module performs the expected task(s). In particular, they ensure that the new code does not negatively impact other LArSoft software. Librarians also ensure the new code is documented and that tests are provided.
+A group of people, the librarians, vet the code going into all releases. The librarians may examine the changes made to the software in detail as well as looking at the bigger picture to ensure the software module performs the expected task(s). In particular, they ensure that the new code does not negatively impact other \larsoft software. Librarians also ensure the new code is documented and that tests are provided.
 
-Librarians interact with the authors until the code meets the tenants listed at~\cite{code-tenants}. LArSoft code is intended to be usable by Liquid Argon TPC with any number of planes, wires, or PMTs. In addition, the code should be flexible and well-documented. 
+Librarians interact with the authors until the code meets the tenants listed at~\cite{code-tenants}. \larsoft code is intended to be usable by Liquid Argon TPC with any number of planes, wires, or PMTs. In addition, the code should be flexible and well-documented. 
 
 \subsection{Testing}
 
-In LArSoft, there is unit testing and integration testing which includes regression tests. Unit tests check very small parts of the code and are run by the author of the code. 
+In \larsoft, there is unit testing and integration testing which includes regression tests. Unit tests check very small parts of the code and are run by the author of the code. 
 The integration tests are written by the author of the algorithm or feature that they test. These tests may be executed by other people in the project as well as the author. It must be possible to automatically run unit and  integration tests.
 
-LArSoft has set up a Continuous Integration system based on Jenkins~\cite{jenkins} that routinely performs a sequence of tests including unit tests, integration tests and regression tests. On failure, the automatic system notifies LArSoft personnel who contact the responsible person(s), e.g. code authors or librarians, to fix the error.
+\larsoft has set up a Continuous Integration system based on Jenkins~\cite{jenkins} that routinely performs a sequence of tests including unit tests, integration tests and regression tests. On failure, the automatic system notifies \larsoft personnel who contact the responsible person(s), e.g. code authors or librarians, to fix the error.
 
 \subsection{Resource Usage}
 
 A rough estimate of resource usage can be obtained by running standard ART services called TimeService and SimpleMemoryCheck. TimeService gives an estimate of the time used by the module to perform its task. SimpleMemoryCheck monitors the usage of memory (RAM) by the whole program. In order for jobs to run smoothly in a GRID or remote environment, the job should use less than 2 Gigabyte of memory, and less than 48 hours of CPU time.
 
-A resource coordinator in LArSoft checks for excessive usage, and if found, analysis is done using tools like Valgrind~\cite{valgrind}, Gperftools~\cite{gperf}, and Allinea.~\cite {allinea}.
+A resource coordinator in \larsoft checks for excessive usage, and if found, analysis is done using tools like Valgrind~\cite{valgrind}, Gperftools~\cite{gperf}, and Allinea.~\cite {allinea}.
 The code author is notified by the resource coordinator of the issue and together they develop a solution to the resource problem. Most typical problems relate to the use of data structures, and can be solved by following the ART guidelines.~\cite{art-guide}
  
 \section{Summary}
