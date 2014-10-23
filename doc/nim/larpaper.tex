@@ -34,7 +34,7 @@
 %%\pagestyle{headings}
 %\setlength{\oddsidemargin}{0.in}
 %\setlength{\evensidemargin}{0.in}
-\newcommand{\larsoft}{LArSoft }
+\newcommand{\larsoft}{LArSoft}
 \thispagestyle{empty}
 
 \pagestyle{myheadings}
@@ -124,7 +124,7 @@ A common software package for the simulation, reconstruction, and analysis of Li
 
 \larsoft  benefits from the experience of multiple experiments.  Each LArTPC provides essentially the same basic information after accounting for small detector differences.  Thus, algorithms developed for one experiment can be directly used by another, as long as the differences in geometry are properly accounted for in the algorithms.  
 
-A liquid argon detector and a sophisticated software toolkit can analyze event topologies typical of neutrino interactions that are difficult to parse and make sense of in traditional legacy technologies. Figure~(ADD bubble chamber and Liquid Argon results picture)
+A liquid argon detector and a sophisticated software toolkit can analyze event topologies typical of neutrino interactions that are difficult to parse and make sense of in traditional legacy technologies. Fig.~(ADD bubble chamber and Liquid Argon results picture)
 Liquid argon detectors see every nuance of the event. \larsoft applies reconstruction algorithms to identify clusters of energy deposit, tracks, particle showers, and interaction vertices.
 
 \subsection{Who Uses \larsoft}
@@ -148,29 +148,15 @@ Liquid argon detectors see every nuance of the event. \larsoft applies reconstru
 
 \section{Framework and Tools}
 \subsection{ART}
-The foundation of \larsoft is the ART event processing framework which coordinates event processing via configurable, pluggable modules that add data to, and retrieve data from, events.~\cite{art-ref}  An event is one unit of data. It may represent an interaction or any period of collected data.
+The current foundation of \larsoft is the ART event processing framework, but work is underway to provide a framework-independent interface. ART coordinates event processing via configurable, pluggable modules that add data to, and retrieve data from, events.~\cite{art-ref}  An event is one unit of data. It may represent an interaction or any period of collected data.
 
-ART provides many of the services necessary to operate in a production environment, including tools for compiling, installing, packaging, and deploying the system.  ART is developed and supported by the Fermilab Scientific Computing Division (SCD) and is used by experiments within the neutrino, astrophysics, and muon programs, including NOvA, Muon G-2, Mu2e, and DarkSide-50, and alongside \larsoft for MicroBooNE, ArgoNeuT, and Lariat.
+ART provides many of the services necessary to operate in a production environment, including tools for compiling, installing, packaging, and deploying the system.  ART is developed and supported by the Fermilab Scientific Computing Division (SCD) and is used by experiments within the neutrino, astrophysics, and muon programs, including NOvA, Muon G-2, Mu2e, and DarkSide-50, and alongside \larsoft for MicroBooNE, ArgoNeuT, and LArIAT.
 
 \subsection{External Packages}
 \subsubsection{Event Generation}
 \larsoft makes use of the NuSoft packages that provide a common interface to event generators, Geant4 and event display libraries developed for use by all neutrino experiments. The packages used include: EventDisplayBase, EventGeneratorBase, G4Base, MagneticField, NuReweight and SimulationBase.
 
-There are several different ways to create events for \larsoft:
-\begin{enumerate}
-\item{CRY - a third-party package to simulate cosmic rays~\cite{cry}}
-\item{External neutrino interaction generators used to produce neutrinos in the Monte Carlo simulation. There are several generators which can supply input to \larsoft:}
-\begin{enumerate}
-\item{GENIE~\cite{genie} - the standard neutrino event generator in \larsoft}
-\item{NuWro~\cite{nuwro} - a neutrino event generator with potentially improved spectral functions for liquid argon}
-\item{GIBUU~\cite{gibuu} - a theory-code framework that was mainly developed for different classes of reactions other than neutrinos}
-\item{NUANCE~\cite{nuance} - an older neutrino event generator used in MiniBooNE; it is available to compare the results of MiniBooNE and MicroBooNE simulations}
-\end{enumerate}
-\item{Single - creation of single participle spill or multiple particles with the initial position, momenta, and the spread of momenta and starting positions specified in the job file.}
-\item{LightSource - simulation of placing an extended, isotropic light source within the TPC volume to generate a stream of photons.}
-\item{TextFileGen - accepts a text file of HepMC~\cite{hepmc} event records.}
-\end{enumerate}
-
+CRY is a third-party package to simulate cosmic rays~\cite{cry} that can be used to create events for \larsoft.  Also, external neutrino interaction generators can be used to produce neutrinos in the Monte Carlo simulation. Or a single participle spill or multiple particles can be created with the initial position, momenta, and the spread of momenta and starting positions specified in the job file. Another way to simulate cosmic rays is LightSource, a simulation of placing an extended, isotropic light source within the TPC volume to generate a stream of photons. Finally, the TextFileGen accepts a text file of HepMC~\cite{hepmc} event records.
 \subsubsection{Detector Simulation}
 NEED WORDS
 
@@ -181,15 +167,15 @@ The Geometry package contains a general interface into the detector descriptions
 
 \begin{figure}[h]
 \center
-\caption{\larsoft requires a descending volume hierarchy of volWorld, volDetEnclosure, volCryostat, volTPC, volTPCPlane, volTPCWire to search for each of these specific volumes. There can be, and probably should be, multiple TPCPlanes and TPCWires.}
+\caption{\larsoft requires a descending volume hierarchy of World, DetEnclosure, Cryostat, TPC, TPCPlane, TPCWire to search for each of these specific volumes. There can be, and probably should be, multiple TPCPlanes and TPCWires.}
 \includegraphics[width=4.0in]{./imgs/geometry_volumes.png}
 \label{geo-vol.img}
 \end{figure}
 
-As shown in Figure~\ref{geo-vol.img},
-the highest level volume is World which contains all elements of the geometry to be accounted for in the simulation and should be sized adequately to account for any features of the detector surroundings that are important for the simulation. For example, a huge mass of rock near the detector could alter the cosmic ray flux from that direction, it should be simulated. There is only one detector enclosure volume which can contain many Cryostat volumes, which can each contain many TPC volumes. Each TPC volume contains only one TPCActive volume, which defines the active volume of liquid argon that is read out by the detector. Any liquid argon that is outside of the drift field would not be part of volTPCActive. It is assumed that volTPCActive is simply a volume of liquid argon with no sub-volumes in it. 
+As shown in Fig.~\ref{geo-vol.img},
+the highest level volume is World which contains all elements of the geometry to be accounted for in the simulation and should be sized adequately to account for any features of the detector surroundings that are important for the simulation. For example, if a huge mass of rock near the detector could alter the cosmic ray flux from that direction, it should be simulated. There is only one detector enclosure volume which can contain many Cryostat volumes, which can each contain many TPC volumes. Each TPC volume contains only one active volume, which defines the active volume of liquid argon that is read out by the detector. Any liquid argon that is outside of the drift field would not be part of the active volume. 
 
-The TPC volume contains many TPCPlaneXXX volumes that describe the wire planes. The TPCPlaneXXX volume contains many TPCWireXXX volumes that each describe a wire in the detector. The Geant4 binding and the ROOT binding support the GDML import and export for reading and writing GDML files.
+The TPC volume contains many volumes that describe the wire planes, with the wire plane volumes containing volumes that each describe a wire in the detector. The Geant4 binding and the ROOT binding support the GDML import and export for reading and writing GDML files.
                     
 \section{Simulation Mechanics}
 
@@ -517,11 +503,11 @@ A simplified reflectivity model is used, whereby each type of boundary in the de
 \label{fig:wireplaneabs}
 \end{figure}
 
-For a given surface, any angularly dependent transmission spectrum can be incorporated, including semi-transparent surfaces.  Non-uniform angular dependence of photon transmission can be modeled through the detector wireplanes.    \larsoft derived classes implement optical attenuation by one or many planes of cylindrical wires which are assumed black to 128 $nm$ light. A cartoon of the wireplane opacity model is shown in figure~\ref{fig:wireplaneabs}.
+For a given surface, any angularly dependent transmission spectrum can be incorporated, including semi-transparent surfaces.  Non-uniform angular dependence of photon transmission can be modeled through the detector wireplanes.    \larsoft derived classes implement optical attenuation by one or many planes of cylindrical wires which are assumed black to 128 $nm$ light. A cartoon of the wireplane opacity model is shown in Fig.~\ref{fig:wireplaneabs}.
 
 Photons are counted at detector volumes whose name matches a string supplied to the \larsoft geometry service.  This volume may represent a photomultiplier tube, or another element defined as optically sensitive, for example, a wavelength shifting surface. At geometry construction time, the volumes matching the appropriate name string in the GDML file are assigned optical detector IDs and become sensitive within the \larsoft simulation.
 
-Three parallel world geometries are used in \larsoft as shown in figure \ref{fig:parallelgeom}.
+Three parallel world geometries are used in \larsoft as shown in Fig.~\ref{fig:parallelgeom}.
 The sensitive elements are placed in a separate Geant4 parallel world geometry.  Only photons are tracked in this geometry, ensuring the optical  detection process is triggered only for optical photons.  Photon step size is not limited by the TPC voxel size, which provides a significant performance improvement. Upon photon detection, tracking of the photon is stopped. Information about the photon's arrival time and detection location are stored in a detected photon table.  At the end of the run, this table is queried to generate simulated photon data products to store in the event.  The same table is filled by the fast simulation method, and hybrid fast and full simulations can be run.  One use case for such a hybrid simulation would be the fast simulation of scintillation photons. Full simulation is required for Cerenkov photons, which have a directionality and so cannot be consistently treated by the fast simulation.
 
 
@@ -560,7 +546,7 @@ analyzer module.}
 
 The light source event generator can be configured to generate photons at a specified wavelength and with a specified geometry and time.  The light source can be configured to step through each optical voxel event-by-event, or else to step through a custom set of arbitrary geometrical configurations specified in a text file.  This event generator is particularly useful for investigating the optical response to different event geometries and is used in the generation of the photon visibility library.
 
-A library analyzer module produces detector visibility maps and other histograms based on the loaded visibility library.  This module is used to validate the optical library and obtain information about the detector response to light deposits at different points.  Some histograms produced by this module for the MicroBooNE optical library are shown in figure \ref{fig:opticalmap}.
+A library analyzer module produces detector visibility maps and other histograms based on the loaded visibility library.  This module is used to validate the optical library and obtain information about the detector response to light deposits at different points.  Some histograms produced by this module for the MicroBooNE optical library are shown in Fig.~\ref{fig:opticalmap}.
 
 
 \section{Reconstruction Mechanics}
@@ -570,10 +556,15 @@ The \larsoft reconstruction is highly flexible due to the design principal it em
 \subsection{Data Product Description}
 
 The \larsoft data products for reconstruction are designed to provide descriptions for the various stages of and approaches to the reconstruction.  The data products describe both two dimensional concepts, such as which energy depositions are closely correlated in both time and space, as well as complicated three dimensional concepts such as which particle tracks and showers should be combined to describe a single particle interaction in the detector.
+Although in principle tracks can be two or
+three-dimensional objects, \larsoft uses only three-dimensional
+tracks.
 
 The \larsoft data products that describe two dimensional concepts are the Wire, Hit, Cluster, and EndPoint2D.  The Wire describes all information from a single calibrated channel of the detector.  It is intended to be an intermediary between the raw signal of the RawDigit object and the rest of the reconstruction.  The user may choose to save the Wire objects to the resultant output file of a reconstruction task, but that is not required.  The Hit encapsulates the concept of a single energy deposition on a single channel in the detector and contains information about the electronics channel recording the hit as well as the magnitude of the deposition.  The Cluster is the association of all Hits that are correlated with each other in space and time.  The EndPoint2D represents an end of a line-like cluster or the start of a diffuse, shower-like cluster.
 
-The data products that describe three dimensional concepts are the SpacePoint, Seed, Track, Shower, Vertex, Event, and PFParticle.  
+The data products that describe three dimensional concepts are the SpacePoint, Seed, Track, Shower, Vertex, Event, and PFParticle. 
+ 
+BRIAN'S NOTE: NEED TO ADD MORE 
 
 \subsection{Organization of Algorithms}
 
@@ -595,35 +586,19 @@ Gaus(s)HitFinder (initially checked into the code repository with a mis-spelling
 
 \subsubsection{Fuzzy Cluster}
 
-After hit finding has completed, the hits in each plane are clustered. The goal of a clustering algorithm is to categorize hits into individual physics objects as best as possible in 2D. Fuzzy Cluster is such an algorithm and proceeds in five stages.
-\begin{enumerate}
-\item
-The first stage implements the FLAME clustering algorithm originally developed for the analysis of DNA microarray data~\cite{flame}. The goal of the FLAME clustering algorithm is to break hits on the selected plane into smaller portions to improve memory usage of the second step, the Hough transform. 
-\item
-The Hough transform identifies hits that form line-like objects such as tracks. The particular variant of the Hough transform implemented is the Progressive Probabilistic Hough Transform, which is optimized for speed and light memory usage~\cite{ppht}. 
-\item
-After lines have been identified in the collection of hits, a set of line merging steps 
-group hits included in the identified lines into track-like and shower-like objects.
-\item
-The hits not incorporated in lines by the Hough transform are merged into the nearest cluster formed from the identified lines. The hits are only merged with lines provided they satisfy a distance requirement. 
-\item
-The final step runs the DBSCAN clustering algorithm, described in~\cite{dbscan}, over hits that were not incorporated into lines from the Hough transform or merged with hits already part of a line. 
-\end{enumerate}
-
+After hit finding has completed, the hits in each plane are clustered. The goal of a clustering algorithm is to categorize hits into individual physics objects as best as possible in 2D. Fuzzy Cluster is such an algorithm and proceeds in stages, making use of several algorithms developed outside of HEP.~\cite{flame}~\cite{ppht}~\cite{dbscan}. These algorithms are combined to provide a good estimate of which hits can be determined to come from a single particle.
 
 \subsubsection{Track Kalman Filter}
 
 The track reconstruction problem in a liquid argon TPC can be
-divided into several stages, including pattern recognition
-(identifying hits that belong to a track), trajectory reconstruction,
-and track parameter estimation. Although in principle tracks can be two or
-three-dimensional objects, \larsoft uses only three-dimensional
-tracks.
+divided into several stages, including pattern recognition, 
+identifying hits that belong to a track, trajectory reconstruction,
+and track parameter estimation. 
 
 Hits are the input data for track reconstruction.  Hits
 represent a one-dimensional measurement of a track (the
 drift time) on a measurement surface defined by the charge drift
-direction and the readout wire. Two or three hits may be combined
+direction and the readout wire. Hits from multiple views may be combined
 into three-dimensional space points. Three dimensional track
 reconstruction can proceed from space points or directly from hits.
 
@@ -635,67 +610,13 @@ measurements that are hits or space points, especially in cases where the
 number of measurements is much larger than the five parameters
 needed to specify a track on a surface.  The Kalman
 filter can be used for both pattern recognition and parameter
-estimation.  Furthermore, the Kalman filter in \larsoft can use either hits or
-space points as input.
-
-The following is a description of the basic Kalman filter algorithm.
-
-\begin{enumerate}
-\item
-Starting from an initial track estimate, generate a predicted
-measurement (hit or space point) and error on the next measurement
-surface.
-\item
-Use the predicted measurement and error to define a road for selecting
-candidate measurements.
-\item
-Use the road defined in the previous step to select hits for inclusion
-in the track.
-\item
-Use the included hits to refine the track estimate.
-\item
-Repeat steps 1--4 until all candidate measurements are included in the
-track or rejected.
-\end{enumerate}
-
-The skeleton Kalman filter requires qualifications and caveats in real cases. The remainder of this
-section describes some of the qualifications that apply to the
-hit-based Kalman filter in \larsoft.
-
-The Kalman
-filter algorithm is not self-starting. That is, an initial estimate
-of the track parameters is required even for the first time.  In the \larsoft hit-based Kalman filter, the initial
-estimate of track parameters is provided
-by a separate seed-track finder. Seed tracks are
-collections of hits from all views that are reconstructed to form a
-short straight three-dimensional track segment. The seed-track finder
-is based on a Hough line finder~\cite{ppht} that finds straight track
-segments in each view, and then combines 
-Hough lines that are consistent in position and angle from different views into three-dimensional
-objects.
-
-In the initial
-stages of reconstruction, when the track contains only a few hits, the
-track parameters errors are very large. The Kalman parameter update in
-step four can easily force the track parameters out of the range of
-validity of a quadratic approximation of the chisquare function
-between track and hit.  For example, the track direction may be
-perturbed by the Kalman updating equation so that the
-track reverses direction in one or more views.  To prevent
-this, in the early stages of track reconstruction, the hit Kalman
-filter uses a linearized propagation model that forces the chisquare
-function to be a perfect quadratic form with a minimum close to the
-seed track parameters.  This ensures that the Kalman filter will
-generate a track close to the seed track in the initial stages of
-reconstruction.  After the track parameters are sufficiently small,
-the linearized approximation is abandoned, and the true propagation
-function is used.
+estimation.  
 
 The measurement surfaces in liquid argon TPCs are intersecting, which means there is no
 predetermined order in which the measurement surfaces should be
 visited.  To prevent back-and-forth tracking, which would overestimate
 propagation noise, such as multiple Coulomb scattering, the \larsoft
-hit Kalman filter chooses the measurement surfaces associated with one
+Kalman filter chooses the measurement surfaces associated with one
 view as primary, and visits these surfaces in their natural
 predetermined order.  Hits from views other than the primary view are
 added to the track by treating the propagation from the track surface
@@ -704,8 +625,8 @@ function.  This measurement propagation is always done using a linear
 approximation as is the measurement function, and is done without
 propagation noise.
 
-The \larsoft hit-based Kalman filter
-does not use a branching track model. Hit selection (step two) for the \larsoft hit-based Kalman filter is
+The \larsoft Kalman filter
+does not use a branching track model. Hit selection for the \larsoft Kalman filter is
 implemented such that at each measurement surface, the filter accepts
 either zero or one hit. If the Kalman filter accepts a wrong hit, the
 track may follow the wrong road (e.g. a delta ray), or the track may
@@ -727,14 +648,13 @@ The electromagnetic shower reconstruction code happens in two steps. The first i
 
 \subsection{Event Visualization}
 An important part of the \larsoft suite is the ability to visually display events. The basic event display is constructed based on ROOT GUI libraries~\cite{ROOT}.
-It can be used to display both data and MC events at any stage of their reconstruction, the latter with the corresponding MC truth information. 
-Navigation between events is either by inserting the desired run and event number in the corresponding fields or by means of the next and previous buttons.
+It can be used to display both data and MC events at any stage of reconstruction, the latter with the corresponding MC truth information. It is possible to navigate between events.
 
-The basic event display window, figure~\ref{2d_event} shows projections in wire-time space for each of the views present in the given detector, where the quantity of charge in ADC collected in each wire is denoted by a color scale or intensity of gray-scale. The ADC threshold of what is displayed is a settable parameter. 
+The basic event display window, Fig.~\ref{2d_event} shows projections in wire-time space for each of the views present in the given detector, where the quantity of charge in ADC collected in each wire is denoted by a color scale or intensity of gray-scale. The ADC threshold of what is displayed is a settable parameter. 
 The user has the option of overlaying an MC event with the MC truth tracks color coded by particle type. The main display window is completed by a wire viewer, which shows the time series of a selected single wire in any of the views; the displayed wire can be chosen via mouse click or a field entry window.
 All of the above pads have zoom capability. The user can choose what reconstructed objects are displayed, and which module created them, by using a special menu window or by specifying this in the FHICL configuration file at runtime. 
 
-The event display has additional windows that allow different visualization of some of the reconstruction objects. These include the 3D event display, as shown in figure~\ref{2d_event} where the 3D Track objects can be viewed in a 3D depiction of the detector, a set of 2D projection views where the tracks are shown in the X-Z and Y-Z plane instead of the wire-time views, and a Calorimetry view where the track and Shower dE/dx depositions are plotted against MC predictions allowing visual particle identification. 
+The event display has additional windows that allow different visualization of some of the reconstruction objects. These include the 3D event display, as shown in Fig.~\ref{2d_event} where the 3D Track objects can be viewed in a 3D depiction of the detector, a set of 2D projection views where the tracks are shown in the X-Z and Y-Z plane instead of the wire-time views, and a Calorimetry view where the track and Shower dE/dx depositions are plotted against MC predictions allowing visual particle identification. 
 
 Since the event display is a \larsoft module, it can be run in sequence with other modules. It is possible to change the FHICL parameters of other modules running in the same job via a menu window. Using this capability and seeing the results of these changes in the event displays is a useful debugging tool in algorithm development.
 
