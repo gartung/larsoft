@@ -131,6 +131,7 @@ Liquid argon detectors see every nuance of the event. \larsoft applies reconstru
 \larsoft is the product of the collaboration between the following experiments and Fermilab.
 \begin{enumerate}
 \item ArgoNeuT
+\item LongBo
 \item LArIAT
 \item MicroBooNE
 \item LBNE
@@ -584,11 +585,13 @@ NEED WORDS.
 \subsection{Unique aspects of \larsoft Reconstruction}
 
 \subsection{One Example Reconstruction Chain in \larsoft}
-The reconstruction chain used by the MicroBoone experiment to reconstruct cosmic and neutrino interactions is described as follows. A LArTPC typically saves raw data in the format of ADC counts as a function of TPC ticks for each wire. The signal can have a unipolar shape if it is on a collection wire or a bipolar shape if it is on an unshielded collection wire. The first step in the reconstruction is to convert the raw signal from each wire to a standard shape such as a Gaussian shape. This is achieved by passing the raw data through a calibrated deconvolution algorithm, which filters noise and corrects for the electronics response and the effect of the drift field response to produce the best estimates of the drift charge and time. 
+The reconstruction chain used by the MicroBoone experiment to reconstruct cosmic and neutrino interactions is described as follows.
 
-[Gaussian Hit Finder - Jonathan]
+\subsubsection{Signal Shaping}
+A LArTPC typically saves raw data in the format of ADC counts as a function of TPC ticks for each wire. The signal can have a unipolar shape if it is on a collection wire or a bipolar shape if it is on an unshielded collection wire. The first step in the reconstruction is to convert the raw signal from each wire to a standard shape such as a Gaussian shape. This is achieved by passing the raw data through a calibrated deconvolution algorithm, which filters noise and corrects for the electronics response and the effect of the drift field response to produce the best estimates of the drift charge and time. 
 
-%[Fuzzy Cluster - Ben C.]
+\subsubsection{Gaussian Hit Finder}
+Gaus(s)HitFinder (initially checked into the code repository with a mis-spelling in the title and henceforth was embraced as the intentional spelling) is a hit-finding algorithm used as the primary hit-finding algorithm in ArgoNeuT and MicroBooNE experiments. The algorithm works starting from deconvolved signals on wires and and defining areas above threshold known as ``pulses''. Once a pulse is found, a `n' Gaussian hypothesis is applied where `n' is defined by the number of peaks initially identified within the pulse. Based on the outcome of the fit and object known as a ``hit'' is formed and stored on the event.
 
 \subsubsection{Fuzzy Cluster}
 
