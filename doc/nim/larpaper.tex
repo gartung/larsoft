@@ -636,8 +636,10 @@ otherwise end prematurely.  Fixing broken tracks relies on
 a track-stitching algorithm that runs after the initial Kalman
 filter reconstruction.
 
-\subsubsection{Calorimetry and PID Reconstruction}
-[Calorimetry and PID - Tingjun]
+\subsubsection{Calorimetric energy reconstruction and particle identification}
+As charged particles tranverse a volume liquid argon, they deposit energy through ionization and scintillation. It is important to measure the energy depotion as it provide information on particle energy and species. The algorithm for reconstructing the ionization energy in LArSoft is optimized for line-like tracks and is being extended to more complicated event topology such as showers. The algorithm takes all the hits associated with a reconstructed track. For each hit, the hit area or amplitude, in ADC counts, is converted to the charge $Q_{det}$, in fC units, on the wire using an ADC to fC conversion factor that was determined by muons or teststand measurements. To account for the charge loss along the drift due to impurities, a first correction is applied to $Q_{det}$ to get the free charge after recombination $Q_{free} = Q_{det}/e^{-t/\tau_{e}}$, where $t$ is the electron drift time for the hit and $\tau_{e}$ is the electron lifetime measured by the muons or purity monitors. The charge $Q_{free}$ is divided by the track pitch $dx$, which is defined as the dot production of track direction and the direction normal to the wire direction in the wire plane, to get the $dQ_{free}/dx$ for the hit. Finally, to account for charge loss due to recombination, also known as ``charge quenching'', a second correction is applied to convert $dQ_{free}/dx$ to $dE/dx$ based on the modified Box's model \cite{box} or the Birks's model\cite{birks}. The total energy deposition from the track is obtained by summing the $dE/dx$ from each hit: $\sum\limits_{i}^{all\ hits}(dE/dx)_{i}\cdot dx_{i}$.
+
+If the incident particle stops in the LArTPC active volume, the energy loss, $dE/dx$, as a function of the residual range ($R$), the path length to the end point of the track, is used as a powerful method for particle identification. There are two methods in LArSoft to determine particle species using calorimetric information. The first method calculates four $\chi^{2}$ values for each track by comparing measured $dE/dx$ versus $R$ points to the proton, charged kaon, charged pion and muon hypotheses and identifies the track as the particle that gives the smallest $\chi^{2}$ value. The second method calculates the quantity $PIDA = <A_{i}> = <(dE/dx)_{i}R_{i}^{0.42}>$ \cite{box}, which is defined to be the average of $A_{i} = (dE/dx)_{i}R_{i}^{0.42}$ over all track points where the residual range $R_{i}$ is less than 30 cm. The particle species can be determined by making a selection on the $PIDA$ value. 
 
 \subsubsection{Shower Reconstruction}
 
@@ -759,7 +761,8 @@ R.E.~Kalman and R.S.~Bucy, J.~Bas.~Eng.~{\bf 83D}, 95 (1961);
 \bibitem{gperf} https://code.google.com/p/gperftools/
 \bibitem{allinea} http://www.allinea.com/
 \bibitem{art-guide} https://cdcvs.fnal.gov/redmine/projects/art/wiki/Data\_Product\_Design\_Guide
-
+\bibitem{box} ArgoNeuT Collaboration, ``A study of electron recombination using highly ionizing particles in the ArgoNeuT Liquid Argon TPC,'' JINST {\bf 8}, P08005 (2013).
+\bibitem{birks} ICARUS Collaboration, ``Study of electron recombination in liquid argon with the ICARUS TPC'', Nucl. Instrum. and Meth. in Phys. Res. A 523 (2004), 275.
 \end{thebibliography}
 \clearpage 
 
