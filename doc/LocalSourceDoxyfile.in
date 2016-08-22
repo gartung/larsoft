@@ -1,0 +1,19 @@
+##
+## File:    LocalSourceDoxyfile.in
+## Purpose: Doxygen configuration template for documentation from MRB sources
+## Author:  Gianluca Petrillo (petrillo@fnal.gov)
+## Date:    August 22, 2016
+##
+## This template is tailored to generate documentation for the source code
+## currently in the working area being compiled. It does not descend into any
+## package that is not in the MRB source area, including other LArSoft packages.
+## 
+## See SourceDoxyfile.in for a bit more information.
+##
+
+# this is the basic configuration:
+@INCLUDE = SourceDoxyfile
+
+## This input path would add all all the source in the MRB source ares
+INPUT                  = $(MRB_SOURCE)/
+

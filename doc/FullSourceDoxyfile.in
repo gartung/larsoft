@@ -1,0 +1,49 @@
+##
+## File:    FullSourceDoxyfile.in
+## Purpose: Doxygen configuration template for documentation with MRB sources
+## Author:  Gianluca Petrillo (petrillo@fnal.gov)
+## Date:    August 22, 2016
+##
+## This template is tailored to generate documentation for the source code
+## currently in the working area being compiled. It also tries to add all the
+## dependencies. It can take *long*.
+## 
+## See SourceDoxyfile.in for a bit more information.
+##
+
+# this is the basic configuration:
+@INCLUDE = SourceDoxyfile
+
+## This input path would add all the missing sources;
+## while not a bad idea, it takes much longer to run (3 minutes on a local
+## installation on a SSD disk).
+
+INPUT                  = $(MRB_SOURCE) \
+                         $(LARANA_DIR)/source \
+                         $(LARCORE_DIR)/source \
+                         $(LARCOREOBJ_DIR)/source \
+                         $(LARDATA_DIR)/source \
+                         $(LARDATAOBJ_DIR)/source \
+                         $(LAREVENTDISPLAY_DIR)/source \
+                         $(LAREVT_DIR)/source \
+                         $(LAREXAMPLES_DIR)/source \
+                         $(LARPANDORA_DIR)/source \
+                         $(LARRECO_DIR)/source \
+                         $(LARSIM_DIR)/source \
+                         $(LARSIMOBJ_DIR)/source \
+                         $(NUTOOLS_DIR)/source \
+                         $(NUSIMDATA_DIR)/source \
+                         $(GENIE)/src \
+                         $(GEANT4_DIR)/source \
+                         $(ART_DIR)/source \
+                         $(CANVAS_DIR)/source \
+                         $(MESSAGEFACILITY_DIR)/source \
+                         $(CETLIB_DIR)/include \
+                         $(FHICLCPP_DIR)/source
+
+
+## we enable the COLLABORATION_GRAPH in UML format for the full documentation.
+COLLABORATION_GRAPH    = YES
+INTERACTIVE_SVG        = YES
+UML_LOOK               = YES
+
