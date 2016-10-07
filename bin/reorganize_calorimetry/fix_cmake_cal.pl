@@ -9,7 +9,7 @@ BEGIN { %dir_list = (
 	"larana_Calorimetry_TrackCalorimetry_module" => "larreco_Calorimetry_TrackCalorimetry_module",
 	"larana_OpticalDetector_LEDCalibrationAna_module" => "larreco_OpticalDetector_LEDCalibrationAna_module",
 	"larana_Calorimetry" => "larreco_Calorimetry",
-	"lardata_RecoObjects" => "lardata_RecoObjects larreco_Deprecated"
+	"lardata_AnalysisAlg" => "larreco_Calorimetry"
                        ); }
 
 foreach my $lib (sort keys %dir_list) {
@@ -22,5 +22,3 @@ foreach my $lib (sort keys %dir_list) {
   #s&\b\Q${lib}\E([^\.\s]*\b)([^\.]|$)&$dir_list{$lib}${1}${2}&g and last;
   s&\b\Q${lib}\E\b([^\.]|$)&$dir_list{$lib}${1}${2}&g and last;
 }
-
-###	"lardata_AnalysisAlg" => "larreco_Calorimetry larana_ParticleIdentification",
