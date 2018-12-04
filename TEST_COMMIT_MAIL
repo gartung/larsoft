@@ -7,4 +7,14 @@ Opening status:
 	commitList = garren@fnal.gov, erica@fnal.gov, petrillo@fnal.gov, larsoftcommit@fnal.gov
 	dohtmldiffs = True
 
+subject line: [larsoft] 01/01: beginning status
+
+
+add emailMaxLines
+
+[multimailhook]
+	mailingList = 
+	commitList = garren@fnal.gov, erica@fnal.gov, petrillo@fnal.gov, larsoftcommit@fnal.gov
+	dohtmldiffs = True
+	emailMaxLines = 100
 
