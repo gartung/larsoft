@@ -1,0 +1,10 @@
+This file will track attempts to change /cvs/projects/larsoft/config on cdcvs
+
+Opening status:
+
+[multimailhook]
+	mailingList = 
+	commitList = garren@fnal.gov, erica@fnal.gov, petrillo@fnal.gov, larsoftcommit@fnal.gov
+	dohtmldiffs = True
+
+
