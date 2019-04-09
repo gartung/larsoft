@@ -1,4 +1,6 @@
 
+# if the CETBUILDTOOLS_VERSION environmental variable is defined, use cetbuildtools
+if(DEFINED ENV{CETBUILDTOOLS_VERSION})
 # variables to be used in cmake templates
 macro( create_product_variables productname productversion )
    string(TOUPPER ${productname} PRODUCTNAME_UC )
@@ -87,3 +89,4 @@ CONFIGURE_FILE ( ${CMAKE_CURRENT_SOURCE_DIR}/larsoft.html.in
 INSTALL( FILES base_dependency_database
                README
          DESTINATION "${product}/${version}/releaseDB" )
+endif()
