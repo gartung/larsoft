@@ -1,3 +1,5 @@
+# if the CETBUILDTOOLS_VERSION environmental variable is defined, use cetbuildtools
+if(DEFINED ENV{CETBUILDTOOLS_VERSION})
 # variables to be used in cmake templates
 macro( create_product_variables productname productversion )
    string(TOUPPER ${productname} PRODUCTNAME_UC )
@@ -13,6 +15,8 @@ macro( create_product_variables productname productversion )
    set( ${PRODUCTNAME_UC}_STRING ${PRODUCTNAME_LC}.${${PRODUCTNAME_UC}_DOT_VERSION} )
    #message(STATUS "${PRODUCTNAME_UC} version is ${${PRODUCTNAME_UC}_VERSION}")
 endmacro( create_product_variables)
+
+create_product_variables( larsoft ${version} )
 
 # define qualifiers
 set( BASEQUAL e19 )

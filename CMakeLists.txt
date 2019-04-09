@@ -9,6 +9,8 @@
 # It sets up all of the larsoft ups products (lardata, larsim, larreco, etc.)
 # ======================================================================
 
+# if the CETBUILDTOOLS_VERSION environmental variable is defined, use cetbuildtools
+if(DEFINED ENV{CETBUILDTOOLS_VERSION})
 
 # use cmake 3.14 or later
 cmake_minimum_required (VERSION 3.12...3.14 FATAL_ERROR)
@@ -52,3 +54,31 @@ add_subdirectory(ups)
 
 # packaging utility
 include(UseCPack)
+
+else() # We are using cetmodules.
+
+cmake_minimum_required (VERSION 3.11)
+
+project( larsoft VERSION 08.05.00 LANGUAGES NONE )
+
+find_package(cetmodules REQUIRED)
+
+set(fcl_dir job)
+set(gdml_dir gdml)
+
+include(CetCMakeEnv)
+cet_cmake_env()
+
+# useful scripts
+add_subdirectory(bin)
+
+# documentation
+add_subdirectory(doc)
+
+# release database
+add_subdirectory(releaseDB)
+
+# generate packageConfig
+add_subdirectory(cmakeConfig)
+
+endif()
